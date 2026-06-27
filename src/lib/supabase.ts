@@ -155,3 +155,128 @@ export async function getSocials(): Promise<Social[]> {
   if (error) throw error
   return data || []
 }
+
+// Write operations
+export async function createProject(data: Omit<Project, 'id' | 'created_at' | 'updated_at'>): Promise<Project> {
+  const { data: result, error } = await supabase.from('projects').insert(data).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function updateProject(id: string, data: Partial<Project>): Promise<Project> {
+  const { data: result, error } = await supabase.from('projects').update(data).eq('id', id).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function deleteProject(id: string): Promise<void> {
+  const { error } = await supabase.from('projects').delete().eq('id', id)
+  if (error) throw error
+}
+
+export async function createSkill(data: Omit<Skill, 'id' | 'created_at' | 'updated_at'>): Promise<Skill> {
+  const { data: result, error } = await supabase.from('skills').insert(data).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function updateSkill(id: string, data: Partial<Skill>): Promise<Skill> {
+  const { data: result, error } = await supabase.from('skills').update(data).eq('id', id).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function deleteSkill(id: string): Promise<void> {
+  const { error } = await supabase.from('skills').delete().eq('id', id)
+  if (error) throw error
+}
+
+export async function createEducation(data: Omit<Education, 'id' | 'created_at' | 'updated_at'>): Promise<Education> {
+  const { data: result, error } = await supabase.from('education').insert(data).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function updateEducation(id: string, data: Partial<Education>): Promise<Education> {
+  const { data: result, error } = await supabase.from('education').update(data).eq('id', id).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function deleteEducation(id: string): Promise<void> {
+  const { error } = await supabase.from('education').delete().eq('id', id)
+  if (error) throw error
+}
+
+export async function createExperience(data: Omit<Experience, 'id' | 'created_at' | 'updated_at'>): Promise<Experience> {
+  const { data: result, error } = await supabase.from('experience').insert(data).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function updateExperience(id: string, data: Partial<Experience>): Promise<Experience> {
+  const { data: result, error } = await supabase.from('experience').update(data).eq('id', id).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function deleteExperience(id: string): Promise<void> {
+  const { error } = await supabase.from('experience').delete().eq('id', id)
+  if (error) throw error
+}
+
+export async function createCertificates(data: Omit<Certificate, 'id' | 'created_at' | 'updated_at'>): Promise<Certificate> {
+  const { data: result, error } = await supabase.from('certificates').insert(data).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function updateCertificates(id: string, data: Partial<Certificate>): Promise<Certificate> {
+  const { data: result, error } = await supabase.from('certificates').update(data).eq('id', id).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function deleteCertificates(id: string): Promise<void> {
+  const { error } = await supabase.from('certificates').delete().eq('id', id)
+  if (error) throw error
+}
+
+export async function updateSiteContent(data: Partial<SiteContent>): Promise<SiteContent> {
+  const { data: result, error } = await supabase.from('site_content').upsert({ id: 'main', ...data }).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function createSocials(data: Omit<Social, 'id' | 'created_at' | 'updated_at'>): Promise<Social> {
+  const { data: result, error } = await supabase.from('socials').insert(data).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function updateSocials(id: string, data: Partial<Social>): Promise<Social> {
+  const { data: result, error } = await supabase.from('socials').update(data).eq('id', id).select().single()
+  if (error) throw error
+  return result
+}
+
+export async function deleteSocials(id: string): Promise<void> {
+  const { error } = await supabase.from('socials').delete().eq('id', id)
+  if (error) throw error
+}
+
+// Auth helpers
+export async function signIn(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  return { data, error }
+}
+
+export async function signOut() {
+  const { error } = await supabase.auth.signOut()
+  return { error }
+}
+
+export async function getUser() {
+  const { data } = await supabase.auth.getUser()
+  return data.user
+}

@@ -1,137 +1,26 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Mail, Phone, MapPin, ExternalLink, Download, 
-  Calendar, Award, Code2, User, Briefcase, GraduationCap, ArrowRight, Heart 
+import {
+  Mail, Phone, MapPin, ExternalLink, Download,
+  Calendar, Award, Code2, User, Briefcase, GraduationCap, ArrowRight, Heart
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Profile photos
 import asfiPortrait from './assets/Asfi_face.png';
 import asfiFull from './assets/Asfi.png';
 import logo from './assets/logo.png';
 
-// Supabase client
 import { supabase } from './lib/supabase';
-
-// Types
-interface Project {
-  title: string;
-  year: string;
-  description: string;
-  tech: string[];
-  github?: string;
-  highlight?: string;
-}
-
-interface TimelineItem {
-  title: string;
-  subtitle: string;
-  period: string;
-  details: string[];
-}
-
-// Data from CV
-const projects: Project[] = [
-  {
-    title: "Q&A Chat Bot",
-    year: "2026",
-    description: "Intelligent question-answering system that extracts text from PDFs and answers student queries using semantic search.",
-    tech: ["LangChain", "HuggingFace", "FAISS", "Streamlit", "Python"],
-    github: "https://github.com/asfiahamed0404",
-    highlight: "AI / RAG"
-  },
-  {
-    title: "End-to-End Data Science Project",
-    year: "Ongoing",
-    description: "Complete machine learning lifecycle project covering data ingestion, preprocessing, model building, evaluation, and deployment.",
-    tech: ["Python", "Scikit-learn", "Pandas", "MLflow"],
-    highlight: "Data Science"
-  },
-  {
-    title: "React Movie App",
-    year: "2025",
-    description: "Full-stack movie browsing platform with reviews, search, and responsive UI. Built with modern React patterns and API integration.",
-    tech: ["React", "TypeScript", "REST API", "Tailwind"],
-    github: "https://github.com/asfiahamed0404",
-    highlight: "Full-Stack"
-  },
-  {
-    title: "Healthcare-MediBridge",
-    year: "2025",
-    description: "Healthcare API management platform built with Ballerina. Participated in the official Ballerina Competition 2025 as a team.",
-    tech: ["Ballerina", "API Design", "Backend"],
-    github: "https://github.com/asfiahamed0404",
-    highlight: "Backend"
-  },
-  {
-    title: "Nano-processor Mini Project",
-    year: "2025",
-    description: "Designed a functional microprocessor supporting addition, subtraction, and negative number handling. Simulated ALU and instruction execution.",
-    tech: ["Digital Logic", "Computer Architecture", "Verilog"],
-    highlight: "Hardware"
-  }
-];
-
-const education: TimelineItem[] = [
-  {
-    title: "B.Sc. (Hons) Computer Science & Engineering",
-    subtitle: "University of Moratuwa",
-    period: "Jun 2024 – Present",
-    details: [
-      "Specializing in Data Science & Engineering (DSE)",
-      "Current CGPA: 3.45 / 4.00"
-    ]
-  },
-  {
-    title: "G.C.E. Advanced Level",
-    subtitle: "KM/Al-Ashraq National School, Nintavur",
-    period: "2022",
-    details: [
-      "Combined Mathematics (A), Chemistry (A), Physics (A)",
-      "Z-Score: +2.3250 | Island Rank: 424 / 35,197"
-    ]
-  },
-  {
-    title: "G.C.E. Ordinary Level",
-    subtitle: "KM/Al-Ashraq National School, Nintavur",
-    period: "2019",
-    details: [
-      "9 A’s including English, ICT, Maths, Science"
-    ]
-  }
-];
-
-const experience: TimelineItem = {
-  title: "Volunteer Teacher",
-  subtitle: "Nintavur, Sri Lanka",
-  period: "2019 – Present",
-  details: [
-    "Provide tutoring and academic support to students",
-    "Analyze student performance to identify skill gaps and track progress"
-  ]
-};
-
-const skills = {
-  Languages: ["Python", "Java", "C++", "JavaScript", "TypeScript", "HTML", "CSS"],
-  "Frameworks & Tools": ["React", "FastAPI", "Streamlit", "LangChain", "HuggingFace", "Tailwind CSS"],
-  Databases: ["MySQL", "MongoDB"],
-  "AI / ML": ["RAG Systems", "FAISS", "Embeddings", "Prompt Engineering", "Scikit-learn"]
-};
-
-const certificates = [
-  { name: "Intro to Machine Learning", issuer: "Kaggle" },
-  { name: "Pandas + Feature Engineering", issuer: "Kaggle" },
-  { name: "Generative Accelerated AI", issuer: "NVIDIA" },
-  { name: "Cloud Foundations", issuer: "AWS Academy" },
-  { name: "Microservices & CI/CD", issuer: "AWS Academy" }
-];
-
-const socials = [
-  { label: "GitHub", href: "https://github.com/asfiahamed0404" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/asfi-ahamed-baa362347" },
-  { icon: Mail, label: "Email", href: "mailto:muasfiahamed276@gmail.com" }
-];
+import type { Project } from './lib/supabase';
+import {
+  useProjects,
+  useSkills,
+  useEducation,
+  useExperience,
+  useCertificates,
+  useSiteContent,
+  useSocials,
+} from './hooks/usePortfolioData';
 
 // Components
 const Nav: React.FC = () => {
@@ -274,22 +163,38 @@ const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, i
       </p>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        {project.tech.map((t, i) => (
+        {(project.tech || []).map((t, i) => (
           <span key={i} className="tech-badge">{t}</span>
         ))}
       </div>
 
       <div className="flex gap-3 mt-auto pt-4 border-t border-[#27272a]">
         {project.github && (
-          <a 
-            href={project.github} 
-            target="_blank" 
+          <a
+            href={project.github}
+            target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm text-[#a1a1aa] hover:text-white transition-colors group/btn"
           >
-            View on GitHub 
+            View on GitHub
             <ExternalLink size={14} className="opacity-50 group-hover/btn:opacity-100" />
           </a>
+        )}
+        {project.demo && (
+          <a
+            href={project.demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-sm text-[#a1a1aa] hover:text-white transition-colors group/btn"
+          >
+            Demo
+            <ExternalLink size={14} className="opacity-50 group-hover/btn:opacity-100" />
+          </a>
+        )}
+        {!project.github && !project.demo && (
+          <span className="flex items-center gap-2 text-sm text-[#71717a]">
+            Coming Soon
+          </span>
         )}
       </div>
     </motion.div>
@@ -518,6 +423,14 @@ const App: React.FC = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { projects } = useProjects();
+  const { skills } = useSkills();
+  const { education } = useEducation();
+  const { experience } = useExperience();
+  const { certificates } = useCertificates();
+  const { content: siteContent } = useSiteContent();
+  const { socials } = useSocials();
+
   const copyEmail = () => {
     navigator.clipboard.writeText('muasfiahamed276@gmail.com');
     toast.success('Email copied to clipboard');
@@ -559,16 +472,15 @@ const App: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#111113] border border-[#27272a] text-sm mb-8">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Currently at University of Moratuwa
+              {siteContent?.hero_status || 'Currently at University of Moratuwa'}
             </div>
 
             <h1 className="text-white tracking-[-3.5px] leading-[0.92] mb-6">
-              Asfi Ahamed
+              {siteContent?.hero_title || 'Asfi Ahamed'}
             </h1>
 
             <p className="max-w-xl text-2xl md:text-[28px] font-light tracking-[-0.6px] text-[#f4f4f5] mb-10">
-              Computer Science &amp; Engineering Student<br />
-              Specializing in Data Science &amp; Engineering.
+              <span dangerouslySetInnerHTML={{ __html: siteContent?.hero_subtitle || 'Computer Science & Engineering Student' }} />
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -633,19 +545,16 @@ const App: React.FC = () => {
             <span className="uppercase tracking-[2px] text-xs font-mono text-[#6366f1]">ABOUT</span>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+<div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Text */}
             <div className="space-y-6">
               <p className="text-2xl leading-tight tracking-tight text-white">
-                I'm a Computer Science &amp; Engineering student at the University of Moratuwa specializing in Data Science &amp; Engineering (DSE). Driven by a strong foundation in mathematics, I love translating complex problems into clean, efficient software architectures.
+                <span dangerouslySetInnerHTML={{ __html: siteContent?.about_text || '' }} />
               </p>
               <div className="text-[#a1a1aa] space-y-5 leading-relaxed text-[15px]">
-                <p>
-                  My engineering focus centers on building practical AI systems, deploying machine learning workflows, developing full-stack applications, and exploring digital logic hardware.
-                </p>
-                <p>
-                  Beyond code, I have been dedicated to serving my community as a Volunteer Teacher since 2019, where I tutor students and analyze performance to track progress.
-                </p>
+                {siteContent?.about_paragraph1 && <p dangerouslySetInnerHTML={{ __html: siteContent.about_paragraph1 }} />}
+                {siteContent?.about_paragraph2 && <p dangerouslySetInnerHTML={{ __html: siteContent.about_paragraph2 }} />}
+                {siteContent?.about_paragraph3 && <p dangerouslySetInnerHTML={{ __html: siteContent.about_paragraph3 }} />}
               </div>
             </div>
 
@@ -679,13 +588,13 @@ const App: React.FC = () => {
             <h2 className="text-white text-3xl tracking-tight mb-9">Education</h2>
             <div className="space-y-12">
               {education.map((item, index) => (
-                <div key={index} className="timeline-item pl-9">
+                <div key={item.id || index} className="timeline-item pl-9">
                   <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-[#6366f1] border-[3px] border-[#030303]" />
                   <div className="text-sm text-[#71717a] mb-1">{item.period}</div>
                   <div className="text-white text-xl font-semibold tracking-tight mb-1">{item.title}</div>
                   <div className="text-[#a1a1aa] mb-3">{item.subtitle}</div>
                   <ul className="space-y-1.5 text-sm">
-                    {item.details.map((d, i) => <li key={i} className="pl-1">• {d}</li>)}
+                    {(item.details || []).map((d, i) => <li key={i} className="pl-1">• {d}</li>)}
                   </ul>
                 </div>
               ))}
@@ -695,15 +604,19 @@ const App: React.FC = () => {
           {/* Experience */}
           <div>
             <h2 className="text-white text-3xl tracking-tight mb-9">Experience</h2>
-            <div className="timeline-item pl-9">
-              <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-[#6366f1] border-[3px] border-[#030303]" />
-              <div className="text-sm text-[#71717a] mb-1">{experience.period}</div>
-              <div className="text-white text-xl font-semibold tracking-tight mb-1">{experience.title}</div>
-              <div className="text-[#a1a1aa] mb-3">{experience.subtitle}</div>
-              <ul className="space-y-1.5 text-sm">
-                {experience.details.map((d, i) => <li key={i} className="pl-1">• {d}</li>)}
-              </ul>
-            </div>
+            {experience ? (
+              <div className="timeline-item pl-9">
+                <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-[#6366f1] border-[3px] border-[#030303]" />
+                <div className="text-sm text-[#71717a] mb-1">{experience.period}</div>
+                <div className="text-white text-xl font-semibold tracking-tight mb-1">{experience.title}</div>
+                <div className="text-[#a1a1aa] mb-3">{experience.subtitle}</div>
+                <ul className="space-y-1.5 text-sm">
+                  {(experience.details || []).map((d, i) => <li key={i} className="pl-1">• {d}</li>)}
+                </ul>
+              </div>
+            ) : (
+              <p className="text-[#71717a]">No experience added yet.</p>
+            )}
           </div>
         </div>
       </section>
@@ -739,13 +652,19 @@ const App: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {Object.entries(skills).map(([category, items]) => (
+            {Object.entries(
+              skills.reduce<Record<string, string[]>>((acc, skill) => {
+                if (!acc[skill.category]) acc[skill.category] = [];
+                acc[skill.category].push(skill.name);
+                return acc;
+              }, {})
+            ).map(([category, items]) => (
               <div key={category}>
                 <div className="font-semibold text-white tracking-tight mb-5 text-lg">{category}</div>
                 <div className="flex flex-wrap gap-2">
                   {items.map((skill, i) => (
-                    <div 
-                      key={i} 
+                    <div
+                      key={i}
                       className="skill-pill px-4 py-1.5 rounded-2xl border border-[#27272a] text-sm hover:bg-[#6366f1] hover:text-white hover:border-[#6366f1] cursor-default"
                     >
                       {skill}
@@ -767,7 +686,7 @@ const App: React.FC = () => {
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {certificates.map((cert, i) => (
-            <div key={i} className="cert-card bg-[#111113] border border-[#27272a] rounded-3xl px-6 py-6 hover:border-[#6366f1]/60 transition-colors">
+            <div key={cert.id || i} className="cert-card bg-[#111113] border border-[#27272a] rounded-3xl px-6 py-6 hover:border-[#6366f1]/60 transition-colors">
               <div className="font-medium text-white tracking-tight mb-1">{cert.name}</div>
               <div className="text-sm text-[#71717a]">{cert.issuer}</div>
             </div>
@@ -782,7 +701,7 @@ const App: React.FC = () => {
       <section id="contact" className="section border-t border-[#27272a] bg-[#0a0a0c] py-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-white text-5xl tracking-[-2px] mb-4">Let's work together.</h2>
-          <p className="text-xl text-[#a1a1aa] mb-12">Have a project or opportunity? I'd love to hear from you.</p>
+          <p className="text-xl text-[#a1a1aa] mb-12">{siteContent?.contact_intro || "Have a project or opportunity? I'd love to hear from you."}</p>
 
           <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-10 text-left">
             <form onSubmit={handleSubmit} className="space-y-6">

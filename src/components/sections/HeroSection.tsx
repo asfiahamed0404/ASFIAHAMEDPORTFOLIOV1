@@ -7,8 +7,8 @@ interface HeroSectionProps {
   heroStatus?: string | null;
   portraitUrl?: string | null;
   fallbackPortrait: string;
-  fallbackLogo?: string;
-  resumeUrl?: string | null;
+
+
 }
 
 const HeroSection: FC<HeroSectionProps> = ({
@@ -17,8 +17,6 @@ const HeroSection: FC<HeroSectionProps> = ({
   heroStatus,
   portraitUrl,
   fallbackPortrait,
-  fallbackLogo,
-  resumeUrl,
 }) => {
   // Fallback text values if content is missing
   const title = heroTitle ?? 'Hi, I’m Asfi Ahamed';

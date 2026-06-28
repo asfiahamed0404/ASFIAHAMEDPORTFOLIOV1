@@ -1,12 +1,12 @@
-import { GraduationCap, Briefcase } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { GraduationCap } from 'lucide-react';
+
 import type { FC } from 'react';
 import { useEducation, useExperience } from '../../hooks/usePortfolioData';
-import type { Education, Experience } from '../../lib/supabase';
+
 
 const EducationExperienceSection: FC = () => {
   const { education } = useEducation();
-  const { experience, loading: expLoading, error: expError } = useExperience();
+  const { experience } = useExperience();
 
   const hasEducation = education.length > 0;
   const hasExperience = !!experience;

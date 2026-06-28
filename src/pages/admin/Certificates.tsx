@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Plus, Pencil, Trash } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '../../lib/supabase'
@@ -55,7 +55,32 @@ export default function AdminCertificates() {
        console.error('Error uploading image:', err)
        throw err
      }
-   }
+    }
+
+  // Delete image from Supabase Storage
+  const deleteImageFromStorage = async (url: string) => {
+    try {
+      const segments = url.split('/')
+      const fileName = segments[segments.length - 1]
+      const { error } = await supabase.storage.from('certificate-images').remove([fileName])
+      if (error) throw error
+    } catch (err) {
+      console.error('Error deleting image:', err)
+      toast.error('Failed to delete image')
+    }
+  }
+
+  const handleRemoveImage = async () => {
+    if (editing?.image_url) {
+      await deleteImageFromStorage(editing.image_url)
+      setEditing(prev => {
+        if (!prev) return prev
+        return { ...prev, image_url: null }
+      })
+    }
+    setImagePreview(null)
+    setImageFile(null)
+  }
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this certificate?')) return
@@ -149,9 +174,9 @@ const certificateData = {
   }
 
   // Load initial data
-  // useEffect(() => {
-  //   load()
-  // }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   if (loading) return <div className="text-white">Loading...</div>
 
@@ -327,12 +352,19 @@ const certificateData = {
                   onChange={handleImageChange}
                 />
                 {imagePreview && (
-                  <div className="mt-2">
+                  <div className="mt-2 flex flex-col items-start">
                     <img
                       src={imagePreview}
                       alt="Preview"
                       className="max-w-full h-auto rounded-xl border border-[#27272a]"
                     />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="mt-2 px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors text-sm"
+                    >
+                      Remove Image
+                    </button>
                   </div>
                 )}
               </div>

@@ -1,12 +1,12 @@
 import { Mail, Phone, MapPin } from 'lucide-react';
-import { useSiteContent, useSocials } from '../../hooks/usePortfolioData';
+import { useSiteContent } from '../../hooks/usePortfolioData';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import type { FC } from 'react';
 
 const ContactSection: FC = () => {
   const { content: siteContent } = useSiteContent();
-  const { socials } = useSocials();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
 
@@ -37,7 +37,7 @@ const ContactSection: FC = () => {
     }, 800);
   };
 
-  const validSocials = socials.filter((s) => !!s.href);
+
 
   if (!siteContent) return null;
   if (!siteContent.contact_intro) return null;

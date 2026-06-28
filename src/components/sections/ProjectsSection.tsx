@@ -47,7 +47,7 @@ const ProjectCard: FC<{ project: Project; index: number }> = ({ project, index }
       )}
       {project.live_website && (
         <a href={project.live_website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-[#a1a1aa] hover:text-white transition-colors">
-          Live
+          Visit Site
         </a>
       )}
     </div>

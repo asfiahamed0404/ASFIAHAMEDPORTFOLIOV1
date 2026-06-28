@@ -42,9 +42,13 @@ export default function AdminCertificates() {
      try {
        const fileExt = file.name.split('.').pop()
        const fileName = `${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}.${fileExt}`
-       const { error } = await supabase.storage
-         .from('certificate-images')
-         .upload(fileName, file)
+const { error } = await supabase.storage
+          .from('certificate-images')
+          .upload(fileName, file, {
+            upsert: true,
+            cacheControl: '3600',
+            contentType: file.type,
+          })
        if (error) throw error
        // Get public URL
        const { data: { publicUrl } } = supabase.storage

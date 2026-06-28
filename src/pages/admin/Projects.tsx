@@ -9,6 +9,7 @@ const projectFields: AdminField[] = [
   { key: 'tech', label: 'Tech Stack (comma separated)', type: 'array', required: true },
   { key: 'github', label: 'GitHub URL', type: 'text' },
   { key: 'demo', label: 'Demo URL', type: 'text' },
+  { key: 'live_website', label: 'Live Website URL', type: 'text' },
   { key: 'highlight', label: 'Highlight Tag', type: 'text' },
   { key: 'image_url', label: 'Image URL', type: 'text' },
   { key: 'display_order', label: 'Display Order', type: 'number' },

@@ -17,6 +17,7 @@ export interface Project {
   tech: string[]
   github: string | null
   demo: string | null
+  live_website: string | null
   highlight: string | null
   image_url: string | null
   display_order: number
@@ -60,6 +61,7 @@ export interface Certificate {
   id: string
   name: string
   issuer: string
+  image_url: string | null
   display_order: number
   created_at: string
   updated_at: string
@@ -79,6 +81,11 @@ export interface SiteContent {
   seo_title: string | null
   seo_description: string | null
   resume_url: string | null
+  // Branding assets URLs (optional)
+  logo_url?: string | null
+  portrait_url?: string | null
+  hero_image_url?: string | null
+  favicon_url?: string | null
   updated_at: string
 }
 

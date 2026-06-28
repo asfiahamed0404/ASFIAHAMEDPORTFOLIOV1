@@ -22,6 +22,7 @@ const navItems = [
   { to: '/admin/experience', label: 'Experience', icon: FileText },
   { to: '/admin/certificates', label: 'Certificates', icon: Award },
   { to: '/admin/site-content', label: 'Site Content', icon: Layers },
+  { to: '/admin/branding', label: 'Branding', icon: Globe },
   { to: '/admin/socials', label: 'Socials', icon: Link2 },
 ]
 

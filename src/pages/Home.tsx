@@ -65,8 +65,8 @@ const hasHeroContent = (content: any): boolean => {
 };
 
 // Components
-const Nav: FC<{ hasAbout: boolean; hasEducation: boolean; hasProjects: boolean; hasSkills: boolean; hasContact: boolean }> = ({
-  hasAbout, hasEducation, hasProjects, hasSkills, hasContact
+const Nav: FC<{ hasAbout: boolean; hasEducation: boolean; hasProjects: boolean; hasSkills: boolean; hasCertificates: boolean }> = ({
+  hasAbout, hasEducation, hasProjects, hasSkills, hasCertificates
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -75,7 +75,7 @@ const Nav: FC<{ hasAbout: boolean; hasEducation: boolean; hasProjects: boolean; 
     { label: "Education", href: "#education", show: hasEducation || true },
     { label: "Projects", href: "#projects", show: hasProjects },
     { label: "Skills", href: "#skills", show: hasSkills },
-    { label: "Contact", href: "#contact", show: hasContact },
+    { label: "Certificates", href: "#certificates", show: hasCertificates },
   ].filter(link => link.show);
 
   const scrollTo = (id: string) => {
@@ -136,13 +136,6 @@ const Nav: FC<{ hasAbout: boolean; hasEducation: boolean; hasProjects: boolean; 
             <Download size={16} /> CV
           </a>
 
-          <a
-            href="mailto:muasfiahamed276@gmail.com"
-            className="hidden sm:flex items-center gap-2 px-5 py-2 rounded-full border border-[#27272a] hover:bg-[#111113] text-sm font-medium transition-colors"
-          >
-            Contact
-          </a>
-
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -169,7 +162,6 @@ const Nav: FC<{ hasAbout: boolean; hasEducation: boolean; hasProjects: boolean; 
             <a href="/Asfi_CV.pdf" download="Asfi_Ahamed_CV.pdf" className="flex items-center gap-2 text-white py-2">
               <Download size={16} /> Download CV
             </a>
-            <a href="mailto:muasfiahamed276@gmail.com" className="text-white py-2">Email me</a>
           </div>
         </div>
       )}
@@ -523,7 +515,7 @@ const Home: FC = () => {
         hasEducation={showBackgroundSection}
         hasProjects={hasProjects}
         hasSkills={hasSkills}
-        hasContact={hasContact}
+        hasCertificates={hasCertificates}
       />
 
       {/* HERO */}

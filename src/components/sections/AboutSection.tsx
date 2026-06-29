@@ -39,18 +39,18 @@ const AboutSection: FC<AboutSectionProps> = ({ content }) => {
           <div className="space-y-6">
             {isNotEmpty(content.about_text) && (
               <p className="text-2xl leading-tight tracking-tight text-white">
-                <span dangerouslySetInnerHTML={{ __html: content.about_text as string }} />
+                <span dangerouslySetInnerHTML={{ __html: content.about_text ?? '' }} />
               </p>
             )}
             <div className="text-[#a1a1aa] space-y-5 leading-relaxed text-[15px]">
               {isNotEmpty(content.about_paragraph1) && (
-                <p dangerouslySetInnerHTML={{ __html: content.about_paragraph1 as string }} />
+                <p dangerouslySetInnerHTML={{ __html: content.about_paragraph1 ?? '' }} />
               )}
               {isNotEmpty(content.about_paragraph2) && (
-                <p dangerouslySetInnerHTML={{ __html: content.about_paragraph2 as string }} />
+                <p dangerouslySetInnerHTML={{ __html: content.about_paragraph2 ?? '' }} />
               )}
               {isNotEmpty(content.about_paragraph3) && (
-                <p dangerouslySetInnerHTML={{ __html: content.about_paragraph3 as string }} />
+                <p dangerouslySetInnerHTML={{ __html: content.about_paragraph3 ?? '' }} />
               )}
             </div>
           </div>

@@ -7,8 +7,6 @@ interface HeroSectionProps {
   heroStatus?: string | null;
   portraitUrl?: string | null;
   fallbackPortrait: string;
-
-
 }
 
 const HeroSection: FC<HeroSectionProps> = ({

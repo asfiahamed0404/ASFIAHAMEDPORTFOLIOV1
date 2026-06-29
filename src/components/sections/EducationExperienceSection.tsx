@@ -1,8 +1,6 @@
 import { GraduationCap } from 'lucide-react';
-
 import type { FC } from 'react';
 import { useEducation, useExperience } from '../../hooks/usePortfolioData';
-
 
 const EducationExperienceSection: FC = () => {
   const { education } = useEducation();

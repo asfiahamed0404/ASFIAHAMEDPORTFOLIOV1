@@ -231,76 +231,114 @@ html { scroll-behavior: smooth; }
 
 /* Hero Section Mobile Styles */
 @media (max-width: 768px) {
-  /* Stack hero content vertically - flex-col on mobile puts text first, then image, then actions, then socials */
-  section:has(.hero-text-content) > div.grid {
-    display: flex !important;
+  /* Stack hero content vertically */
+  section:has(.hero-text-content) > div.flex {
     flex-direction: column !important;
   }
   
-  /* Text content - order 1 (top) */
+  /* Make hero-text-content transparent to flex so its children can be reordered globally */
   .hero-text-content {
+    display: contents !important;
+  }
+
+  /* Mobile order:
+     1. h1 "Asfi Ahamed" name
+     2. Portrait image with 3rd Year badge centered on it
+     3. Status badge (if exists)
+     4. Description text
+     5. Action buttons
+     6. Social links
+  */
+  .hero-text-content h1 {
     order: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.25rem !important;
+  }
+
+  /* 3rd year badge fits into the portrait, centered */
+  .hero-text-content > .third-year-badge {
+    order: 2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0 !important;
+    z-index: 2;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-text-content > div:not(.third-year-badge):not(.hero-actions):not(.hero-socials):has(.w-2) {
+    /* Status badge with pulse dot */
+    order: 3;
+    margin-top: 2.75rem !important;
+    margin-bottom: 1rem !important;
     text-align: center;
     width: 100%;
   }
 
-  /* Center the 3rd Year badge on mobile */
-  .hero-text-content > div:first-child {
-    margin-bottom: 1rem !important;
-  }
-
-  /* Center the status badge on mobile */
-  .hero-text-content > div:nth-child(2) {
-    margin-bottom: 1rem !important;
-  }
-
-  /* Center heading on mobile */
-  .hero-text-content h1 {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* Center subtitle on mobile */
   .hero-text-content p {
+    order: 4;
     text-align: center;
     max-width: 100% !important;
-  }
-
-  /* Portrait image - order 2 (after text) */
-  .hero-portrait {
-    order: 2;
-    margin-top: 2rem !important;
     margin-bottom: 1.5rem !important;
   }
 
-  .hero-portrait img {
-    width: 220px !important;
-    height: 220px !important;
-  }
+  /* Portrait image - order 2 (paired with the badge) */
+.hero-portrait {
+  order: 2;
+  position: relative;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0 !important;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 
-  /* Action buttons - order 3 (after image) */
-  .hero-actions {
-    order: 3;
+.hero-portrait img {
+  width: 220px !important;
+  height: 220px !important;
+  transition: filter 0.5s ease, transform 0.5s ease;
+}
+
+.hero-portrait img {
+  filter: grayscale(100%);
+}
+.hero-portrait img:hover {
+  filter: grayscale(0%) brightness(1.1) saturate(1.25);
+  transform: scale(1.02);
+}
+
+/* Mobile / touch devices - keep grayscale default, hover lights up on touch */
+@media (hover: none) {
+  .hero-portrait img {
+    filter: grayscale(100%);
+  }
+  .hero-portrait img:hover {
+    filter: grayscale(0%) brightness(1.1) saturate(1.25);
+    transform: scale(1.02);
+  }
+}
+
+/* Action buttons - order 5 (after text content) */
+  .hero-text-content .hero-actions {
+    order: 5;
     flex-direction: column !important;
     width: 100% !important;
     align-items: center !important;
-    margin-top: 1.5rem !important;
     margin-bottom: 1.5rem !important;
   }
 
-  .hero-actions button {
+  .hero-text-content .hero-actions button {
     width: 100%;
     max-width: 280px;
     justify-content: center;
   }
 
-  /* Social links - order 4 (bottom) */
-  .hero-socials {
-    order: 4;
+  /* Social links - order 6 (bottom) */
+  .hero-text-content .hero-socials {
+    order: 6;
     justify-content: center !important;
     flex-wrap: wrap;
     width: 100%;
@@ -308,7 +346,70 @@ html { scroll-behavior: smooth; }
   }
 }
 
-/* Remove invalid CSS selector */
-section[id=""] > div.grid.md\\:grid-cols-2 {
-  display: none;
+/* Mobile Project Slider */
+.projects-slider {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  padding: 1rem 0;
+  /* Remove section padding on mobile to let cards occupy full viewport */
+  width: 100%;
 }
+
+@media (max-width: 768px) {
+  .projects-slider {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+  }
+
+}
+
+.projects-slider::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.projects-slider-card {
+  flex: 0 0 100vw;
+  max-width: 100vw;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 768px) {
+  .projects-slider {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+
+  .projects-slider-card {
+    flex: none;
+    min-width: auto;
+    scroll-snap-align: none;
+  }
+}
+
+/* Portrait hover effect on desktop */
+
+/* Blinking green dot animation for 3rd Year badge */
+@keyframes blink-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.third-year-badge .blink-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  animation: blink-slow 2s ease-in-out infinite;
+  margin-right: 0.5rem;
+}
+
+

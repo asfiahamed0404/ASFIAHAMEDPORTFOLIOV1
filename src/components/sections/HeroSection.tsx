@@ -23,11 +23,12 @@ const HeroSection: FC<HeroSectionProps> = ({
 
   return (
     <section className="pt-24 pb-16 px-6 max-w-6xl mx-auto">
-      <div className="pt-12 pb-8 grid md:grid-cols-2 gap-12 items-center">
+      <div className="pt-12 pb-8 flex flex-col-reverse md:grid md:grid-cols-2 gap-12 items-center">
         {/* Left side – text */}
         <div className="hero-text-content">
           {/* 3rd Year Badge - Always at the top */}
-          <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#6366f1]/10 border border-[#6366f1]/30 text-[#818cf8] text-sm font-medium mb-6">
+          <div className="third-year-badge inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#6366f1]/10 border border-[#6366f1]/30 text-[#818cf8] text-sm font-medium mb-6">
+            <span className="blink-dot" />
             3rd Year
           </div>
 
@@ -52,7 +53,7 @@ const HeroSection: FC<HeroSectionProps> = ({
             <motion.img
               src={portraitUrl || fallbackPortrait}
               alt="Asfi Ahamed"
-              className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px] object-cover object-[50%_30%] rounded-[2.5rem] border border-[#27272a] shadow-2xl"
+              className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px] object-cover object-[50%_30%] rounded-[2.5rem] border border-[#27272a] shadow-2xl transition-all duration-500 hero-portrait-img"
               loading="lazy"
               width={320}
               height={320}

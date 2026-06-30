@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Briefcase } from 'lucide-react';
+import { useRef } from 'react';
 import type { FC } from 'react';
 import { useProjects } from '../../hooks/usePortfolioData';
 import type { Project } from '../../lib/supabase';
@@ -56,6 +57,17 @@ const ProjectCard: FC<{ project: Project; index: number }> = ({ project, index }
 
 const ProjectsSection: FC = () => {
   const { projects, loading, error } = useProjects();
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (sliderRef.current) {
+      const scrollAmount = sliderRef.current.offsetWidth; // Scroll by one full card width
+      sliderRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
   if (loading) return <div className="text-white">Loading projects…</div>;
   if (error) return <div className="text-red-400">Failed to load projects</div>;
@@ -71,10 +83,42 @@ const ProjectsSection: FC = () => {
           <h2 className="text-white text-4xl tracking-[-1.5px]">Projects</h2>
         </div>
         <p className="hidden md:block max-w-xs text-sm text-[#71717a]">
-          A collection of projects spanning AI, full‑stack development, and systems programming.
+          A collection of projects spanning AI, full-stack development, and systems programming.
         </p>
       </div>
-      <div className="grid md:grid-cols-2 gap-5">
+      
+      {/* Mobile Slider Container */}
+      <div className="relative md:hidden">
+        <div 
+          ref={sliderRef}
+          className="projects-slider"
+        >
+          {projects.map((project, index) => (
+            <div key={project.id} className="projects-slider-card">
+              <ProjectCard project={project} index={index} />
+            </div>
+          ))}
+        </div>
+        
+        {/* Mobile Navigation Arrows */}
+        <button 
+          onClick={() => scroll("left")}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-[#111113]/80 border border-[#27272a] text-[#a1a1aa] hover:text-white hover:border-[#6366f1]/50 transition-colors backdrop-blur-sm"
+          aria-label="Previous project"
+        >
+          <span className="text-2xl">‹</span>
+        </button>
+        <button 
+          onClick={() => scroll("right")}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-[#111113]/80 border border-[#27272a] text-[#a1a1aa] hover:text-white hover:border-[#6366f1]/50 transition-colors backdrop-blur-sm"
+          aria-label="Next project"
+        >
+          <span className="text-2xl">›</span>
+        </button>
+      </div>
+
+      {/* Desktop Grid */}
+      <div className="hidden md:grid md:grid-cols-2 gap-5">
         {projects.map((project, index) => (
           <ProjectCard key={project.id} project={project} index={index} />
         ))}

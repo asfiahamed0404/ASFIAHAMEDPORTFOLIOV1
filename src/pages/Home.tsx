@@ -524,11 +524,6 @@ const Home: FC = () => {
           <div className="pt-12 pb-8 flex flex-col-reverse md:grid md:grid-cols-2 gap-12 items-center">
             {/* Left: Text Content */}
             <div className="hero-text-content">
-              {/* 3rd Year Badge - Always at the top */}
-              <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#6366f1]/10 border border-[#6366f1]/30 text-[#818cf8] text-sm font-medium mb-6">
-                3rd Year
-              </div>
-
               {isNotEmpty(siteContent?.hero_status) && (
                 <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#111113] border border-[#27272a] text-sm mb-8">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -590,17 +585,15 @@ const Home: FC = () => {
 
             {/* Right: Portrait Photo */}
             <div className="relative flex justify-center md:justify-end mt-8 md:mt-0 hero-portrait">
-              <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-br from-[#6366f1]/20 to-transparent rounded-[3rem] blur-2xl" />
-                <motion.img
-                  src={asfiPortrait}
-                  alt="Asfi Ahamed"
-                  className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px] object-cover object-[50%_30%] rounded-[2.5rem] border border-[#27272a] shadow-2xl"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
-                />
-              </div>
+              <div className="absolute -inset-4 bg-gradient-to-br from-[#6366f1]/20 to-transparent rounded-[3rem] blur-2xl" />
+              <motion.img
+                src={asfiPortrait}
+                alt="Asfi Ahamed"
+                className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px] object-cover object-[50%_30%] rounded-[2.5rem] border border-[#27272a] shadow-2xl grayscale hover:grayscale-0 transition-all duration-500 hover:brightness-110 hover:saturate-125"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+              />
             </div>
           </div>
         </section>

@@ -17,7 +17,7 @@ const HeroSection: FC<HeroSectionProps> = ({
   fallbackPortrait,
 }) => {
   // Fallback text values if content is missing
-  const title = heroTitle ?? 'Hi, I’m Asfi Ahamed';
+  const title = heroTitle ?? "Hi, I'm Asfi Ahamed";
   const subtitle = heroSubtitle ?? 'Computer Science & Engineering Student';
   const status = heroStatus ?? '';
 
@@ -25,7 +25,12 @@ const HeroSection: FC<HeroSectionProps> = ({
     <section className="pt-24 pb-16 px-6 max-w-6xl mx-auto">
       <div className="pt-12 pb-8 grid md:grid-cols-2 gap-12 items-center">
         {/* Left side – text */}
-        <div>
+        <div className="hero-text-content">
+          {/* 3rd Year Badge - Always at the top */}
+          <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#6366f1]/10 border border-[#6366f1]/30 text-[#818cf8] text-sm font-medium mb-6">
+            3rd Year
+          </div>
+
           {status && (
             <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#111113] border border-[#27272a] text-sm mb-8">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -41,7 +46,7 @@ const HeroSection: FC<HeroSectionProps> = ({
         </div>
 
         {/* Right side – portrait */}
-        <div className="relative flex justify-center md:justify-end mt-8 md:mt-0">
+        <div className="relative flex justify-center md:justify-end mt-8 md:mt-0 hero-portrait">
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-to-br from-[#6366f1]/20 to-transparent rounded-[3rem] blur-2xl" />
             <motion.img

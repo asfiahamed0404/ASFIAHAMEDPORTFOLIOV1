@@ -228,3 +228,87 @@ html { scroll-behavior: smooth; }
   --normal-text: var(--text-primary);
   --normal-border: var(--border);
 }
+
+/* Hero Section Mobile Styles */
+@media (max-width: 768px) {
+  /* Stack hero content vertically - flex-col on mobile puts text first, then image, then actions, then socials */
+  section:has(.hero-text-content) > div.grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  /* Text content - order 1 (top) */
+  .hero-text-content {
+    order: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Center the 3rd Year badge on mobile */
+  .hero-text-content > div:first-child {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Center the status badge on mobile */
+  .hero-text-content > div:nth-child(2) {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Center heading on mobile */
+  .hero-text-content h1 {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Center subtitle on mobile */
+  .hero-text-content p {
+    text-align: center;
+    max-width: 100% !important;
+  }
+
+  /* Portrait image - order 2 (after text) */
+  .hero-portrait {
+    order: 2;
+    margin-top: 2rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .hero-portrait img {
+    width: 220px !important;
+    height: 220px !important;
+  }
+
+  /* Action buttons - order 3 (after image) */
+  .hero-actions {
+    order: 3;
+    flex-direction: column !important;
+    width: 100% !important;
+    align-items: center !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .hero-actions button {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+
+  /* Social links - order 4 (bottom) */
+  .hero-socials {
+    order: 4;
+    justify-content: center !important;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 1rem !important;
+  }
+}
+
+/* Remove invalid CSS selector */
+section[id=""] > div.grid.md\\:grid-cols-2 {
+  display: none;
+}

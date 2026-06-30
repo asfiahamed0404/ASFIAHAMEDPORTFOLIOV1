@@ -521,9 +521,14 @@ const Home: FC = () => {
       {/* HERO */}
       {hasHero && (
         <section className="pt-24 pb-16 px-6 max-w-6xl mx-auto">
-          <div className="pt-12 pb-8 grid md:grid-cols-2 gap-12 items-center">
+          <div className="pt-12 pb-8 flex flex-col-reverse md:grid md:grid-cols-2 gap-12 items-center">
             {/* Left: Text Content */}
-            <div>
+            <div className="hero-text-content">
+              {/* 3rd Year Badge - Always at the top */}
+              <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#6366f1]/10 border border-[#6366f1]/30 text-[#818cf8] text-sm font-medium mb-6">
+                3rd Year
+              </div>
+
               {isNotEmpty(siteContent?.hero_status) && (
                 <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#111113] border border-[#27272a] text-sm mb-8">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -544,7 +549,7 @@ const Home: FC = () => {
               )}
 
               {(hasProjects || hasContact) && (
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 hero-actions">
                   {hasProjects && (
                     <button
                       onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
@@ -566,7 +571,7 @@ const Home: FC = () => {
 
               {/* Social Links */}
               {hasSocials && (
-                <div className="flex items-center gap-3 mt-9">
+                <div className="flex items-center gap-3 mt-9 hero-socials">
                   {validSocials.map((social, idx) => (
                     <a
                       key={idx}
@@ -579,18 +584,12 @@ const Home: FC = () => {
                       {social.label}
                     </a>
                   ))}
-                  <button
-                    onClick={copyEmail}
-                    className="flex items-center gap-2 text-sm ml-1 px-5 h-11 rounded-2xl border border-[#27272a] hover:border-[#6366f1] hover:text-white transition-all"
-                  >
-                    <Mail size={16} /> Email
-                  </button>
                 </div>
               )}
             </div>
 
             {/* Right: Portrait Photo */}
-            <div className="relative flex justify-center md:justify-end mt-8 md:mt-0">
+            <div className="relative flex justify-center md:justify-end mt-8 md:mt-0 hero-portrait">
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-br from-[#6366f1]/20 to-transparent rounded-[3rem] blur-2xl" />
                 <motion.img

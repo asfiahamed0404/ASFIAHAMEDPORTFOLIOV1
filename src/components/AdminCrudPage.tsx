@@ -103,7 +103,7 @@ export default function AdminCrudPage({
         </div>
         <div className="bg-red-900/20 border border-red-800 rounded-3xl p-8 text-center">
           <p className="text-red-400 mb-4">Failed to load {title.toLowerCase()}</p>
-          <p className="text-[#71717a] text-sm mb-4">{error}</p>
+          <p className="text-white text-sm mb-4">{error}</p>
           <button onClick={load} className="btn-primary px-4 py-2 rounded-xl">
             Retry
           </button>
@@ -127,9 +127,9 @@ export default function AdminCrudPage({
         </button>
       </div>
 
-      <div className="bg-[#111113] border border-[#27272a] rounded-3xl overflow-hidden">
+      <div className="bg-[#1a1a2e] border border-gray-600 rounded-3xl overflow-hidden shadow-md">
         <table className="w-full text-left text-sm">
-          <thead className="bg-[#18181b] text-[#71717a]">
+          <thead className="bg-[#18181b] text-white">
             <tr>
               {displayColumns.map((col) => (
                 <th key={col.key} className="p-4 font-medium">
@@ -175,7 +175,7 @@ export default function AdminCrudPage({
               <tr>
                 <td
                   colSpan={displayColumns.length + 1}
-                  className="p-8 text-center text-[#71717a]"
+                  className="p-8 text-center text-gray-300"
                 >
                   No items found.
                 </td>
@@ -187,20 +187,20 @@ export default function AdminCrudPage({
 
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 border border-white rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl text-white">
             <h2 className="text-white text-xl mb-6">
               {editing[idKey] ? 'Edit' : 'Add'} {title.slice(0, -1)}
             </h2>
             <form onSubmit={handleSave} className="space-y-4">
               {fields.map((field) => (
                 <div key={field.key}>
-                  <label className="block text-sm text-[#a1a1aa] mb-2">
+                  <label className="block text-sm text-white mb-2">
                     {field.label}
                   </label>
                   {field.type === 'textarea' ? (
                     <textarea
                       required={field.required}
-                      className="form-input w-full rounded-2xl px-4 py-3 resize-none"
+                      className="form-input w-full rounded-2xl px-4 py-3 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-black placeholder-gray-500 resize-none"
                       rows={4}
                       value={editing[field.key] || ''}
                       onChange={(e) =>
@@ -214,7 +214,7 @@ export default function AdminCrudPage({
                     <input
                       type="text"
                       required={field.required}
-                      className="form-input w-full rounded-2xl px-4 h-12"
+                      className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-black placeholder-gray-500"
                       value={
                         Array.isArray(editing[field.key])
                           ? editing[field.key].join(', ')
@@ -234,7 +234,7 @@ export default function AdminCrudPage({
                     <input
                       type={field.type === 'number' ? 'number' : 'text'}
                       required={field.required}
-                      className="form-input w-full rounded-2xl px-4 h-12"
+                      className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-black placeholder-gray-500"
                       value={editing[field.key] || ''}
                       onChange={(e) =>
                         setEditing((prev) => ({
@@ -250,7 +250,7 @@ export default function AdminCrudPage({
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="px-6 py-2 rounded-xl border border-[#27272a] text-white hover:bg-[#18181b]"
+                  className="px-6 py-2 rounded-xl border border-white text-white hover:bg-gray-700"
                 >
                   Cancel
                 </button>

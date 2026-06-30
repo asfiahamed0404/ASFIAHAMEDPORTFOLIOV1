@@ -40,7 +40,7 @@ function AdminStatCard({ title, getFn, icon: Icon }: StatCardProps) {
   }, [getFn])
 
   return (
-    <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-6 hover:border-[#6366f1]/60 transition-colors">
+    <div className="bg-[#1a1a2e] border border-gray-600 rounded-3xl p-6 hover:border-indigo-600 transition-colors shadow-md">
       <div className="flex items-center gap-3 mb-3">
         <div className="p-2 bg-[#6366f1]/10 rounded-xl text-[#818cf8]">
           <Icon size={24} />

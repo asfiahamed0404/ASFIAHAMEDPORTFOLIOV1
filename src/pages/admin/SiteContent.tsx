@@ -50,17 +50,17 @@ export default function AdminSiteContent() {
   if (loading) return <div className="text-white">Loading...</div>
 
   return (
-    <div>
+    <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 text-white rounded-xl p-6 shadow-lg">
       <h1 className="text-white text-2xl mb-6">Site Content</h1>
       <form onSubmit={handleSave} className="space-y-4 max-w-2xl">
         {fields.map((field) => (
           <div key={field.key}>
-            <label className="block text-sm text-[#a1a1aa] mb-2">
+            <label className="block text-sm text-white mb-2">
               {field.label}
             </label>
             {field.type === 'textarea' ? (
               <textarea
-                className="form-input w-full rounded-2xl px-4 py-3 resize-none"
+                className="form-input w-full rounded-2xl px-4 py-3 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300 resize-none"
                 rows={4}
                 value={content?.[field.key as keyof SiteContent] as string || ''}
                 onChange={(e) =>
@@ -72,7 +72,7 @@ export default function AdminSiteContent() {
             ) : (
               <input
                 type="text"
-                className="form-input w-full rounded-2xl px-4 h-12"
+                className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
                 value={content?.[field.key as keyof SiteContent] as string || ''}
                 onChange={(e) =>
                   setContent((prev) =>

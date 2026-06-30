@@ -39,12 +39,12 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#030303] text-[#a1a1aa] flex">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-gray-900 text-white flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#111113] border-r border-[#27272a] flex flex-col">
+      <aside className="w-64 bg-indigo-800 text-white border-r border-indigo-700 flex flex-col shadow-lg">
         <div className="p-6 border-b border-[#27272a]">
           <div className="text-white font-semibold text-xl">Admin</div>
-          <div className="text-xs text-[#71717a] mt-1 truncate">{user?.email}</div>
+          <div className="text-xs text-gray-300 mt-1 truncate">{user?.email}</div>
         </div>
 
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
@@ -56,8 +56,8 @@ export default function AdminLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors ${
                   isActive
-                    ? 'bg-[#6366f1] text-white'
-                    : 'text-[#a1a1aa] hover:bg-[#18181b]'
+                    ? 'bg-indigo-600 text-white'
+                    : 'text-gray-300 hover:bg-indigo-800'
                 }`
               }
             >
@@ -70,7 +70,7 @@ export default function AdminLayout() {
         <div className="p-3 border-t border-[#27272a] space-y-1">
           <a
             href="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-[#a1a1aa] hover:bg-[#18181b] transition-colors"
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-gray-300 hover:bg-indigo-800 transition-colors"
           >
             <Globe size={18} /> View Site
           </a>
@@ -84,7 +84,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-8 overflow-y-auto bg-[#121214] text-gray-100">
         <Outlet />
       </main>
     </div>

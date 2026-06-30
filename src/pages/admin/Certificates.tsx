@@ -184,30 +184,30 @@ const certificateData = {
 
   if (loading) return <div className="text-white">Loading...</div>
 
-  if (error) {
-    return (
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-white text-2xl">Certificates</h1>
-          <button
-            onClick={() => {
-              setEditing(null)
-              setIsFormOpen(true)
-            }}
-            className="btn-primary px-4 py-2 rounded-xl flex items-center gap-2"
-          >
-            <Plus size={16} /> Add
-          </button>
-        </div>
-        <div className="bg-red-900/20 border border-red-800 rounded-3xl p-8 text-center">
-          <p className="text-red-400 mb-4">Failed to load certificates</p>
-          <p className="text-[#71717a] text-sm mb-4">{error}</p>
-          <button onClick={load} className="btn-primary px-4 py-2 rounded-xl">
-            Retry
-          </button>
-        </div>
+if (error) {
+  return (
+    <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-gray-800 text-white rounded-xl p-6 shadow-lg">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-white text-2xl">Certificates</h1>
+        <button
+          onClick={() => {
+            setEditing(null)
+            setIsFormOpen(true)
+          }}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded flex items-center gap-2"
+        >
+          <Plus size={16} /> Add
+        </button>
       </div>
-    )
+      <div className="bg-red-900/20 border border-red-800 rounded-3xl p-8 text-center">
+        <p className="text-red-400 mb-4">Failed to load certificates</p>
+        <p className="text-gray-300 text-sm mb-4">{error}</p>
+        <button onClick={load} className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded mt-2">
+          Retry
+        </button>
+      </div>
+    </div>
+  )
   }
 
   return (
@@ -225,9 +225,9 @@ const certificateData = {
         </button>
       </div>
 
-      <div className="bg-[#111113] border border-[#27272a] rounded-3xl overflow-hidden">
+      <div className="bg-[#1a1a2e] border border-gray-600 rounded-3xl overflow-hidden shadow-md">
         <table className="w-full text-left text-sm">
-          <thead className="bg-[#18181b] text-[#71717a]">
+          <thead className="bg-[#2c2c3a] text-white">
             <tr>
               {certificateFields
                 .filter(f => f.type !== 'textarea')
@@ -298,61 +298,61 @@ const certificateData = {
       {/* Form Modal */}
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 border border-white rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl text-white">
             <h2 className="text-white text-xl mb-6">
               {editing ? 'Edit' : 'Add'} Certificate
             </h2>
             <form onSubmit={handleFormSubmit} className="space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm text-[#a1a1aa] mb-2">
+                <label className="block text-sm text-white mb-2">
                   Name
                 </label>
                 <input
                   name="name"
                   type="text"
                   required
-                  className="form-input w-full rounded-2xl px-4 h-12"
+                  className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
                   value={editing?.name || ''}
                   onChange={handleInputChange}
                 />
               </div>
               {/* Issuer */}
               <div>
-                <label className="block text-sm text-[#a1a1aa] mb-2">
+                <label className="block text-sm text-white mb-2">
                   Issuer
                 </label>
                 <input
                   name="issuer"
                   type="text"
                   required
-                  className="form-input w-full rounded-2xl px-4 h-12"
+                  className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
                   value={editing?.issuer || ''}
                   onChange={handleInputChange}
                 />
               </div>
               {/* Display Order */}
               <div>
-                <label className="block text-sm text-[#a1a1aa] mb-2">
+                <label className="block text-sm text-white mb-2">
                   Display Order
                 </label>
                 <input
                   name="display_order"
                   type="number"
-                  className="form-input w-full rounded-2xl px-4 h-12"
+                  className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
                   value={editing?.display_order?.toString() || ''}
                   onChange={handleInputChange}
                 />
               </div>
               {/* Image Upload */}
               <div>
-                <label className="block text-sm text-[#a1a1aa] mb-2">
+                <label className="block text-sm text-white mb-2">
                   Certificate Image (PNG, JPG, WEBP, GIF)
                 </label>
                 <input
                   type="file"
                   accept="image/png, image/jpeg, image/webp, image/gif"
-                  className="form-input w-full rounded-2xl px-4 h-12"
+                  className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
                   onChange={handleImageChange}
                 />
                 {imagePreview && (
@@ -382,7 +382,7 @@ const certificateData = {
                     setImagePreview(null)
                     setImageFile(null)
                   }}
-                  className="px-6 py-2 rounded-xl border border-[#27272a] text-white hover:bg-[#18181b]"
+                  className="px-6 py-2 rounded-xl border border-white text-white hover:bg-gray-700"
                 >
                   Cancel
                 </button>

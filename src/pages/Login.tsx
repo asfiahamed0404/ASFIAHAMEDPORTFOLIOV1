@@ -37,24 +37,24 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#030303] flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-500 to-pink-600 flex items-center justify-center p-6">
+      <div className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 w-full max-w-md shadow-xl border border-indigo-200 text-gray-900">
         <div className="text-center mb-10">
           <img src={logo} alt="Asfi Ahamed" className="w-14 h-14 mx-auto mb-4 object-contain" />
-          <h1 className="text-white text-3xl font-semibold">Admin Login</h1>
-          <p className="text-[#71717a] mt-2">Sign in to manage your portfolio</p>
+          <h1 className="!text-black text-3xl font-semibold">Admin Login</h1>
+          <p className="text-gray-800 mt-2">Sign in to manage your portfolio</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm text-[#a1a1aa] mb-2">Email</label>
+            <label className="block text-sm text-gray-900 mb-2">Email</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#71717a]" size={20} />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="form-input w-full rounded-2xl px-12 h-12 text-lg"
+                className="form-input w-full rounded-2xl px-12 h-12 text-lg border border-indigo-300 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="admin@example.com"
                 required
                 disabled={isSubmitting}
@@ -63,14 +63,14 @@ export default function AdminLogin() {
           </div>
 
           <div>
-            <label className="block text-sm text-[#a1a1aa] mb-2">Password</label>
+            <label className="block text-sm text-gray-900 mb-2">Password</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#71717a]" size={20} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="form-input w-full rounded-2xl px-12 h-12 text-lg pr-12"
+                className="form-input w-full rounded-2xl px-12 h-12 text-lg pr-12 border border-indigo-300 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 placeholder="••••••••"
                 required
                 disabled={isSubmitting}
@@ -88,14 +88,14 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={isSubmitting || authLoading}
-            className="btn-primary w-full h-14 rounded-2xl text-lg font-medium flex items-center justify-center gap-2 disabled:opacity-70"
+            className="w-full h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-medium flex items-center justify-center gap-2 disabled:opacity-70"
           >
             {isSubmitting ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-[#71717a] mt-8">
-          <a href="/" className="hover:text-white">← Back to portfolio</a>
+        <p className="text-center text-sm text-gray-900 mt-8">
+          <a href="/" className="text-gray-900 hover:underline">← Back to portfolio</a>
         </p>
       </div>
     </div>

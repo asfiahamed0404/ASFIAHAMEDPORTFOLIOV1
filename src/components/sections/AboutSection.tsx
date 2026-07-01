@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { User } from 'lucide-react';
 import type { FC } from 'react';
 import type { SiteContent } from '../../lib/supabase';
+import SectionHeading from '../SectionHeading';
 import fallbackPortrait from '../../assets/Asfi_face.png';
 
 // Simple utility to check if a value is not empty
@@ -28,12 +29,15 @@ const AboutSection: FC<AboutSectionProps> = ({ content }) => {
   if (!hasAbout) return null;
 
   return (
-    <section id="about" className="section border-t border-[#27272a] bg-[#0a0a0c] py-20 px-6">
+    <section id="about" className="relative py-24 px-6 overflow-hidden">
+      <div className="absolute inset-0 -z-10 surface-dotted opacity-40 pointer-events-none" />
+      <div className="absolute inset-x-0 top-0 -z-10 h-px section-divider" />
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <User className="text-[#6366f1]" size={20} />
-          <span className="uppercase tracking-[2px] text-xs font-mono text-[#6366f1]">ABOUT</span>
-        </div>
+        <SectionHeading
+          eyebrow="About"
+          title="A bit about me."
+          icon={User}
+        />
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Text */}
           <div className="space-y-6">
@@ -56,11 +60,11 @@ const AboutSection: FC<AboutSectionProps> = ({ content }) => {
           </div>
           {/* Full Photo */}
           <div className="relative">
-            <div className="absolute -inset-3 bg-gradient-to-br from-[#6366f1]/10 to-transparent rounded-[2.5rem] blur-2xl" />
+            <div className="absolute -inset-3 bg-gradient-to-br from-[#6366f1]/20 to-transparent rounded-[2.5rem] blur-2xl" />
             <motion.img
               src={content?.portrait_url || fallbackPortrait}
               alt="Asfi Ahamed"
-              className="relative w-full max-w-[520px] mx-auto md:mx-0 rounded-[2.25rem] border border-[#27272a] shadow-xl object-cover md:h-[850px]"
+              className="relative w-full max-w-[520px] mx-auto md:mx-0 rounded-[2.25rem] border border-[#27272a] shadow-xl object-cover md:h-[850px] card-hover-lift card-glow-top"
               loading="lazy"
               width={520}
               height={850}

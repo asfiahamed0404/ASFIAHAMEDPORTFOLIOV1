@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import type { FC } from 'react';
 import { useProjects } from '../../hooks/usePortfolioData';
 import type { Project } from '../../lib/supabase';
+import SectionHeading from '../SectionHeading';
 
 const ProjectCard: FC<{ project: Project; index: number }> = ({ project, index }) => (
   <motion.div
@@ -11,7 +12,7 @@ const ProjectCard: FC<{ project: Project; index: number }> = ({ project, index }
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ delay: index * 0.04 }}
-    className="project-card group bg-[#111113] border border-[#27272a] rounded-3xl p-8 flex flex-col h-full"
+    className="project-card group relative bg-[#0d0d10]/70 border border-[#27272a] rounded-3xl p-8 flex flex-col h-full card-hover-lift card-glow-top card-shine backdrop-blur-md"
   >
     <div className="flex justify-between items-start mb-5">
       <div>
@@ -73,55 +74,52 @@ const ProjectsSection: FC = () => {
   if (error) return <div className="text-red-400">Failed to load projects</div>;
 
   return (
-    <section id="projects" className="section max-w-6xl mx-auto px-6 py-20">
-      <div className="flex-end justify-between mb-10">
-        <div>
-          <div className="flex items-center gap-3 mb-3">
-            <Briefcase className="text-[#6366f1]" size={20} />
-            <span className="uppercase tracking-[2px] text-xs font-mono text-[#6366f1]">SELECTED WORK</span>
+    <section id="projects" className="relative px-6 py-24">
+      <div className="absolute inset-x-0 top-0 -z-10 h-px section-divider" />
+      <div className="max-w-6xl mx-auto">
+        <SectionHeading
+          eyebrow="Selected Work"
+          title="Things I've built."
+          subtitle="A collection of projects spanning AI, full-stack, and systems programming."
+          icon={Briefcase}
+        />
+
+        {/* Mobile Slider Container */}
+        <div className="relative md:hidden">
+          <div
+            ref={sliderRef}
+            className="projects-slider"
+          >
+            {projects.map((project, index) => (
+              <div key={project.id} className="projects-slider-card">
+                <ProjectCard project={project} index={index} />
+              </div>
+            ))}
           </div>
-          <h2 className="text-white text-4xl tracking-[-1.5px]">Projects</h2>
+
+          {/* Mobile Navigation Arrows */}
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-[#111113]/80 border border-[#27272a] text-[#a1a1aa] hover:text-white hover:border-[#6366f1]/50 transition-colors backdrop-blur-sm"
+            aria-label="Previous project"
+          >
+            <span className="text-2xl">‹</span>
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-[#111113]/80 border border-[#27272a] text-[#a1a1aa] hover:text-white hover:border-[#6366f1]/50 transition-colors backdrop-blur-sm"
+            aria-label="Next project"
+          >
+            <span className="text-2xl">›</span>
+          </button>
         </div>
-        <p className="hidden md:block max-w-xs text-sm text-[#71717a]">
-          A collection of projects spanning AI, full-stack development, and systems programming.
-        </p>
-      </div>
-      
-      {/* Mobile Slider Container */}
-      <div className="relative md:hidden">
-        <div 
-          ref={sliderRef}
-          className="projects-slider"
-        >
+
+        {/* Desktop Grid */}
+        <div className="hidden md:grid md:grid-cols-2 gap-5">
           {projects.map((project, index) => (
-            <div key={project.id} className="projects-slider-card">
-              <ProjectCard project={project} index={index} />
-            </div>
+            <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
-        
-        {/* Mobile Navigation Arrows */}
-        <button 
-          onClick={() => scroll("left")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-[#111113]/80 border border-[#27272a] text-[#a1a1aa] hover:text-white hover:border-[#6366f1]/50 transition-colors backdrop-blur-sm"
-          aria-label="Previous project"
-        >
-          <span className="text-2xl">‹</span>
-        </button>
-        <button 
-          onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-[#111113]/80 border border-[#27272a] text-[#a1a1aa] hover:text-white hover:border-[#6366f1]/50 transition-colors backdrop-blur-sm"
-          aria-label="Next project"
-        >
-          <span className="text-2xl">›</span>
-        </button>
-      </div>
-
-      {/* Desktop Grid */}
-      <div className="hidden md:grid md:grid-cols-2 gap-5">
-        {projects.map((project, index) => (
-          <ProjectCard key={project.id} project={project} index={index} />
-        ))}
       </div>
     </section>
   );

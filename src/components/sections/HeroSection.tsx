@@ -22,7 +22,8 @@ const HeroSection: FC<HeroSectionProps> = ({
   const status = heroStatus ?? '';
 
   return (
-    <section className="pt-24 pb-16 px-6 max-w-6xl mx-auto">
+    <section className="pt-28 pb-20 px-6 max-w-6xl mx-auto relative">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.15),transparent_60%)] pointer-events-none" />
       <div className="pt-12 pb-8 flex flex-col-reverse md:grid md:grid-cols-2 gap-12 items-center">
         {/* Left side – text */}
         <div className="hero-text-content">

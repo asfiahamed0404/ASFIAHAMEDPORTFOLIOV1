@@ -22,6 +22,7 @@ import {
   useSocials,
 } from '../hooks/usePortfolioData';
 import BackToTop from '../components/BackToTop';
+import AmbientOrbs from '../components/AmbientOrbs';
 
 // Helper to check if value is empty
 const isEmpty = (val: unknown): boolean => {
@@ -510,7 +511,9 @@ const Home: FC = () => {
   const showBackgroundSection = hasEducation || hasExperience;
 
   return (
-    <div className="min-h-screen bg-[#030303] text-[#a1a1aa] overflow-x-hidden">
+    <div className="min-h-screen bg-[#030303] text-[#a1a1aa] overflow-x-hidden relative">
+      <AmbientOrbs />
+      <div className="relative z-10">
       <Nav
         hasAbout={hasAbout}
         hasEducation={showBackgroundSection}
@@ -861,6 +864,7 @@ const Home: FC = () => {
       </footer>
 
       <BackToTop />
+      </div>
     </div>
   );
 };

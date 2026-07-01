@@ -413,3 +413,144 @@ html { scroll-behavior: smooth; }
 }
 
 
+
+/* ============================================
+   PUBLIC VIEW -- Section upgrade utilities
+   ============================================ */
+
+/* Ambient floating orbs */
+.ambient-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+}
+
+/* Section eyebrow + gradient accent bar */
+.section-eyebrow-bar {
+  position: relative;
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: linear-gradient(to right, #6366f1, #a855f7, #ec4899);
+  border-radius: 9999px;
+}
+.section-eyebrow-bar::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: inherit;
+  filter: blur(6px);
+  opacity: 0.6;
+}
+
+/* Title gradient (subtle white -> silver) */
+.title-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section reveal -- fade + lift on viewport entry */
+@keyframes section-reveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal-on-enter {
+  animation: section-reveal 0.8s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* Card hover lift deluxe */
+.card-hover-lift {
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+              border-color 0.4s ease,
+              box-shadow 0.5s ease,
+              background 0.4s ease;
+}
+.card-hover-lift:hover {
+  transform: translateY(-6px);
+  border-color: rgba(129, 140, 248, 0.35) !important;
+  box-shadow: 0 24px 60px -25px rgba(129, 140, 248, 0.45),
+              0 0 0 1px rgba(99, 102, 241, 0.15) inset;
+  background: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, rgba(168,85,247,0.04) 100%) !important;
+}
+
+/* Inset top glow line for premium cards */
+.card-glow-top {
+  position: relative;
+  overflow: hidden;
+}
+.card-glow-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(to right, transparent 0%, rgba(168,85,247,0.5) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Hover-shine sweep */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+.card-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+  transition: left 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+.card-shine:hover::after {
+  left: 130%;
+}
+
+/* Section divider -- animated gradient line */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(99,102,241,0.4) 30%,
+    rgba(168,85,247,0.4) 50%,
+    rgba(236,72,153,0.4) 70%,
+    transparent 100%);
+  background-size: 200% 100%;
+  animation: divider-flow 8s linear infinite;
+}
+@keyframes divider-flow {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* Background surface variants -- alternating subtle pattern */
+.surface-dotted {
+  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* FORM input polish for contact form */
+.form-field {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.25s ease;
+}
+.form-field:focus {
+  outline: none;
+  border-color: rgba(129, 140, 248, 0.5);
+  background: rgba(99, 102, 241, 0.06);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}

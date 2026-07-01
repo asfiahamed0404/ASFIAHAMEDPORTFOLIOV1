@@ -1,8 +1,8 @@
 import { useState, useEffect, type FC } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail, Phone, MapPin, ExternalLink, Download,
-  Calendar, Award, Code2, User, Briefcase, GraduationCap, ArrowRight, Heart
+  Calendar, Award, Code2, User, Briefcase, GraduationCap, ArrowRight, ArrowUp, Heart, Menu, X
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -368,7 +368,7 @@ const AppreciateSection: FC = () => {
           Did you enjoy my portfolio?
         </h2>
         <p className="text-[#a1a1aa] mb-10">
-          If my projects or story resonated with you, a small appreciation would make my day.
+          If my projects or story resonated with you, a small appreciation.
         </p>
 
         {/* Main Heart Button */}
@@ -757,7 +757,7 @@ const Home: FC = () => {
 
       {/* CERTIFICATES */}
       {hasCertificates && (
-        <section className="max-w-5xl mx-auto px-6 py-20">
+        <section id="certificates" className="max-w-5xl mx-auto px-6 py-20">
           <div className="flex items-center gap-3 mb-10">
             <Award className="text-[#6366f1]" size={20} />
             <span className="uppercase tracking-[2px] text-xs font-mono text-[#6366f1]">CERTIFICATIONS</span>

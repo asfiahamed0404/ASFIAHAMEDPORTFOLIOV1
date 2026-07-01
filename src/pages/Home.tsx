@@ -21,6 +21,7 @@ import {
   useSiteContent,
   useSocials,
 } from '../hooks/usePortfolioData';
+import BackToTop from '../components/BackToTop';
 
 // Helper to check if value is empty
 const isEmpty = (val: unknown): boolean => {
@@ -859,6 +860,8 @@ const Home: FC = () => {
           </div>
         </div>
       </footer>
+
+      <BackToTop />
     </div>
   );
 };

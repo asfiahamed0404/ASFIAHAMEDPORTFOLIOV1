@@ -23,22 +23,21 @@ ON storage.objects FOR SELECT
 TO public
 USING (bucket_id = 'certificate-images');
 
--- Public insert (lets the admin (anon when running locally / public when
--- running behind a client-only admin) upload new certificate images)
-CREATE POLICY "public_insert_certificate_images"
+-- Authenticated insert (admin) upload new certificate images
+CREATE POLICY "authenticated_insert_certificate_images"
 ON storage.objects FOR INSERT
-TO public
+TO authenticated
 WITH CHECK (bucket_id = 'certificate-images');
 
--- Authenticated-only update (replace an existing certificate image)
-CREATE POLICY "public_update_certificate_images"
+-- Authenticated update (admin) replace an existing certificate image
+CREATE POLICY "authenticated_update_certificate_images"
 ON storage.objects FOR UPDATE
-TO public
+TO authenticated
 USING (bucket_id = 'certificate-images')
 WITH CHECK (bucket_id = 'certificate-images');
 
--- Authenticated-only delete (clean up old certificate images)
-CREATE POLICY "public_delete_certificate_images"
+-- Authenticated delete (admin) cleanup old certificate images
+CREATE POLICY "authenticated_delete_certificate_images"
 ON storage.objects FOR DELETE
-TO public
+TO authenticated
 USING (bucket_id = 'certificate-images');

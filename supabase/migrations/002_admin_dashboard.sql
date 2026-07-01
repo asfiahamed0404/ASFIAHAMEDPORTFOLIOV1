@@ -64,44 +64,82 @@ DROP POLICY IF EXISTS "admin_delete_appreciations" ON appreciations;
 DROP POLICY IF EXISTS "anon_select_appreciations" ON appreciations;
 DROP POLICY IF EXISTS "anon_update_appreciations" ON appreciations;
 
+-- Drop any existing admin_full policies (prevent duplicates)
+DROP POLICY IF EXISTS "admin_full_projects" ON projects;
+DROP POLICY IF EXISTS "admin_full_skills" ON skills;
+DROP POLICY IF EXISTS "admin_full_education" ON education;
+DROP POLICY IF EXISTS "admin_full_experience" ON experience;
+DROP POLICY IF EXISTS "admin_full_certificates" ON certificates;
+DROP POLICY IF EXISTS "admin_full_site_content" ON site_content;
+DROP POLICY IF EXISTS "admin_full_socials" ON socials;
+DROP POLICY IF EXISTS "admin_full_appreciations" ON appreciations;
+
 -- ============================================
 -- STEP 2: Create simple RLS policies that work
 -- ============================================
 
--- Projects: Allow authenticated users full access
+-- Projects: Public read, admin full access
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "authenticated_full_projects" ON projects FOR ALL TO authenticated USING (true);
+CREATE POLICY "anon_select_projects" ON projects FOR SELECT TO anon USING (true);
+CREATE POLICY "admin_full_projects" ON projects FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
--- Skills: Allow authenticated users full access
+-- Skills: Public read, admin full access
 ALTER TABLE skills ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "authenticated_full_skills" ON skills FOR ALL TO authenticated USING (true);
+CREATE POLICY "anon_select_skills" ON skills FOR SELECT TO anon USING (true);
+CREATE POLICY "admin_full_skills" ON skills FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
--- Education: Allow authenticated users full access
+-- Education: Public read, admin full access
 ALTER TABLE education ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "authenticated_full_education" ON education FOR ALL TO authenticated USING (true);
+CREATE POLICY "anon_select_education" ON education FOR SELECT TO anon USING (true);
+CREATE POLICY "admin_full_education" ON education FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
--- Experience: Allow authenticated users full access
+-- Experience: Public read, admin full access
 ALTER TABLE experience ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "authenticated_full_experience" ON experience FOR ALL TO authenticated USING (true);
+CREATE POLICY "anon_select_experience" ON experience FOR SELECT TO anon USING (true);
+CREATE POLICY "admin_full_experience" ON experience FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
--- Certificates: Allow authenticated users full access
+-- Certificates: Public read, admin full access
 ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "authenticated_full_certificates" ON certificates FOR ALL TO authenticated USING (true);
+CREATE POLICY "anon_select_certificates" ON certificates FOR SELECT TO anon USING (true);
+CREATE POLICY "admin_full_certificates" ON certificates FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
--- Site Content: Allow authenticated users full access
+-- Site Content: Public read, admin full access
 ALTER TABLE site_content ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "authenticated_full_site_content" ON site_content FOR ALL TO authenticated USING (true);
+CREATE POLICY "anon_select_site_content" ON site_content FOR SELECT TO anon USING (true);
+CREATE POLICY "admin_full_site_content" ON site_content FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
--- Socials: Allow authenticated users full access
+-- Socials: Public read, admin full access
 ALTER TABLE socials ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "authenticated_full_socials" ON socials FOR ALL TO authenticated USING (true);
+CREATE POLICY "anon_select_socials" ON socials FOR SELECT TO anon USING (true);
+CREATE POLICY "admin_full_socials" ON socials FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
 -- Appreciations: Keep existing anon UPDATE, add authenticated UPDATE
 ALTER TABLE appreciations ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "anon_select_appreciations" ON appreciations;
 DROP POLICY IF EXISTS "anon_update_appreciations" ON appreciations;
-CREATE POLICY "authenticated_full_appreciations" ON appreciations FOR ALL TO authenticated USING (true);
+-- Admin-only full access for appreciations
+CREATE POLICY "admin_full_appreciations" ON appreciations FOR ALL TO authenticated
+USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'))
+WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
+-- Public read for appreciations (e.g., view count)
+CREATE POLICY "anon_select_appreciations" ON appreciations FOR SELECT TO anon USING (true);
+-- Allow anonymous update if you need it (optional, kept from original schema)
+CREATE POLICY "anon_update_appreciations" ON appreciations FOR UPDATE TO anon USING (true);
 -- ============================================
 -- STEP 3: Grant permissions
 -- ============================================

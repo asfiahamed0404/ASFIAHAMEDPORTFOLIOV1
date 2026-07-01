@@ -125,6 +125,16 @@ GRANT SELECT ON public.appreciations TO anon;
 GRANT UPDATE ON public.appreciations TO anon;
 
 -- Public read access policies for anon role
+DROP POLICY IF EXISTS "anon_select_projects" ON projects;
+DROP POLICY IF EXISTS "anon_select_skills" ON skills;
+DROP POLICY IF EXISTS "anon_select_education" ON education;
+DROP POLICY IF EXISTS "anon_select_experience" ON experience;
+DROP POLICY IF EXISTS "anon_select_certificates" ON certificates;
+DROP POLICY IF EXISTS "anon_select_site_content" ON site_content;
+DROP POLICY IF EXISTS "anon_select_socials" ON socials;
+DROP POLICY IF EXISTS "anon_select_appreciations" ON appreciations;
+DROP POLICY IF EXISTS "anon_update_appreciations" ON appreciations;
+
 CREATE POLICY "anon_select_projects" ON projects FOR SELECT TO anon USING (true);
 CREATE POLICY "anon_select_skills" ON skills FOR SELECT TO anon USING (true);
 CREATE POLICY "anon_select_education" ON education FOR SELECT TO anon USING (true);

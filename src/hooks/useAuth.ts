@@ -18,19 +18,24 @@ export function useAuth() {
   }, [])
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
+    let cancelled = false
     checkUser()
-
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (cancelled) return
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
     return () => {
+      cancelled = true
       subscription.unsubscribe()
     }
   }, [checkUser])
 
   const login = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (!error && data?.user) {
+      setUser(data.user)
+    }
     return { error }
   }
 

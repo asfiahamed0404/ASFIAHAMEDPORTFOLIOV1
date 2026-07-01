@@ -14,10 +14,10 @@ export default function AdminLogin() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    if (user) {
+    if (user && !authLoading) {
       navigate('/admin', { replace: true })
     }
-  }, [user, navigate])
+  }, [user, authLoading, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,7 +32,6 @@ export default function AdminLogin() {
       setIsSubmitting(false)
     } else {
       toast.success('Welcome back!')
-      navigate('/admin')
     }
   }
 

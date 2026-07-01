@@ -44,7 +44,6 @@ export default function AdminLayout() {
       <aside className="w-64 bg-indigo-800 text-white border-r border-indigo-700 flex flex-col shadow-lg">
         <div className="p-6 border-b border-[#27272a]">
           <div className="text-white font-semibold text-xl">Admin</div>
-          <div className="text-xs text-gray-300 mt-1 truncate">{user?.email}</div>
         </div>
 
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">

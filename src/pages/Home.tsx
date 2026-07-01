@@ -369,7 +369,7 @@ const AppreciateSection: FC = () => {
           Did you enjoy my portfolio?
         </h2>
         <p className="text-[#a1a1aa] mb-10">
-          If my projects or story resonated with you, a small appreciation.
+          A small appreciation.
         </p>
 
         {/* Main Heart Button */}
@@ -441,7 +441,7 @@ const AppreciateSection: FC = () => {
             className="mt-10 text-[#a1a1aa]"
           >
             <p className="text-lg">
-              Thank you — it genuinely means a lot ❤️
+              Thank you ❤️
             </p>
             <p className="text-sm mt-1 text-[#71717a]">
               Feel free to reach out if you'd like to collaborate or chat.
@@ -783,7 +783,6 @@ const Home: FC = () => {
         <section id="contact" className="section border-t border-[#27272a] bg-[#0a0a0c] py-20 px-6">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-white text-5xl tracking-[-2px] mb-4">Let's work together.</h2>
-            <p className="text-xl text-[#a1a1aa] mb-12">{siteContent?.contact_intro}</p>
 
             <div className="bg-[#111113] border border-[#27272a] rounded-3xl p-10 text-left">
               <form onSubmit={handleSubmit} className="space-y-6">

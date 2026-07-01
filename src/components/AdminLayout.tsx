@@ -27,7 +27,7 @@ const navItems = [
 ]
 
 export default function AdminLayout() {
-  const { user, logout } = useAuth()
+  const { logout } = useAuth()
 
   const handleLogout = async () => {
     const { error } = await logout()

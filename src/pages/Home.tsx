@@ -1,8 +1,8 @@
 import { useState, useEffect, type FC } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   Mail, Phone, MapPin, ExternalLink, Download,
-  Calendar, Award, Code2, User, Briefcase, GraduationCap, ArrowRight, ArrowUp, Heart, Menu, X
+  Calendar, Award, Code2, User, Briefcase, GraduationCap, ArrowRight, Heart
 } from 'lucide-react';
 import { toast } from 'sonner';
 

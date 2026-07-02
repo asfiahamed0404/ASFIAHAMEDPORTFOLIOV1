@@ -2,7 +2,7 @@ import { useState, useEffect, type FC } from 'react';
 import { motion } from 'framer-motion';
 import {
   Mail, Phone, MapPin, ExternalLink, Download,
-  Calendar, Award, Code2, User, Briefcase, GraduationCap, ArrowRight, Heart
+  Calendar, Code2, User, Briefcase, GraduationCap, ArrowRight, Heart
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -23,6 +23,7 @@ import {
 } from '../hooks/usePortfolioData';
 import BackToTop from '../components/BackToTop';
 import AmbientOrbs from '../components/AmbientOrbs';
+import CertificatesSection from '../components/sections/CertificatesSection';
 
 // Helper to check if value is empty
 const isEmpty = (val: unknown): boolean => {
@@ -406,7 +407,7 @@ const AppreciateSection: FC = () => {
             ) : (
               <>
                 <span className="font-mono text-lg text-white">{count}</span>
-                <span className="text-[#71717a]"> people have appreciated this portfolio</span>
+                <span className="text-[#71717a]"> people have appreciated my portfolio</span>
               </>
             )}
           </div>
@@ -760,23 +761,7 @@ const Home: FC = () => {
       )}
 
       {/* CERTIFICATES */}
-      {hasCertificates && (
-        <section id="certificates" className="max-w-5xl mx-auto px-6 py-20">
-          <div className="flex items-center gap-3 mb-10">
-            <Award className="text-[#6366f1]" size={20} />
-            <span className="uppercase tracking-[2px] text-xs font-mono text-[#6366f1]">CERTIFICATIONS</span>
-          </div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {certificates.map((cert, i) => (
-              <div key={cert.id || i} className="cert-card bg-[#111113] border border-[#27272a] rounded-3xl px-6 py-6 hover:border-[#6366f1]/60 transition-colors">
-                <div className="font-medium text-white tracking-tight mb-1">{cert.name}</div>
-                <div className="text-sm text-[#71717a]">{cert.issuer}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      <CertificatesSection />
 
       {/* APPRECIATE */}
       <AppreciateSection />

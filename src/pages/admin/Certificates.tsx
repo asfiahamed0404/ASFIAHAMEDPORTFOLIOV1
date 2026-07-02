@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { Plus, Pencil, Trash } from 'lucide-react'
+import { Plus, Pencil, Trash, Upload, ImageIcon, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '../../lib/supabase'
 import type { Certificate } from '../../lib/supabase'
@@ -18,6 +18,7 @@ export default function AdminCertificates() {
   const [editing, setEditing] = useState<Certificate | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [saving, setSaving] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -100,6 +101,8 @@ const { error } = await supabase.storage
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (saving) return
+    setSaving(true)
     try {
       let imageUrl = null
       if (imageFile) {
@@ -144,6 +147,8 @@ const certificateData = {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error'
       toast.error(`Failed to save: ${message}`)
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -151,13 +156,40 @@ const certificateData = {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    acceptFile(file)
+  }
+
+  const acceptFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file')
+      return
+    }
     setImageFile(file)
-    // Preview the image
     const reader = new FileReader()
     reader.onloadend = () => {
       setImagePreview(reader.result as string)
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    e.currentTarget.classList.add('cert-upload--dragover')
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    e.currentTarget.classList.remove('cert-upload--dragover')
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    e.currentTarget.classList.remove('cert-upload--dragover')
+    const file = e.dataTransfer.files?.[0]
+    if (file) acceptFile(file)
   }
 
   // Handle form input change
@@ -349,45 +381,75 @@ if (error) {
                 <label className="block text-sm text-white mb-2">
                   Certificate Image (PNG, JPG, WEBP, GIF)
                 </label>
-                <input
-                  type="file"
-                  accept="image/png, image/jpeg, image/webp, image/gif"
-                  className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
-                  onChange={handleImageChange}
-                />
-                {imagePreview && (
-                  <div className="mt-2 flex flex-col items-start">
+                {imagePreview ? (
+                  <div className="cert-upload cert-upload--filled group">
                     <img
                       src={imagePreview}
                       alt="Preview"
-                      className="max-w-full h-auto rounded-xl border border-[#27272a]"
+                      className="cert-upload-preview"
                     />
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className="mt-2 px-3 py-1 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors text-sm"
-                    >
-                      Remove Image
-                    </button>
+                    <div className="cert-upload-actions">
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="cert-upload-remove"
+                        aria-label="Remove image"
+                      >
+                        <X size={14} />
+                        <span>Remove</span>
+                      </button>
+                    </div>
                   </div>
+                ) : (
+                  <label
+                    className="cert-upload cert-upload--empty group"
+                    onDragOver={handleDragOver}
+                    onDragEnter={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    <input
+                      type="file"
+                      accept="image/png, image/jpeg, image/webp, image/gif"
+                      className="sr-only"
+                      onChange={handleImageChange}
+                    />
+                    <div className="cert-upload-icon">
+                      <ImageIcon size={22} className="text-[#a5b4fc]" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="cert-upload-title">Click or drag to upload</span>
+                      <span className="cert-upload-sub">PNG, JPG, WEBP or GIF — up to ~5MB</span>
+                    </div>
+                    <span className="cert-upload-cta">
+                      <Upload size={13} />
+                      Browse
+                    </span>
+                  </label>
                 )}
               </div>
               {/* Buttons */}
               <div className="flex justify-end gap-3 mt-6">
                 <button
                   type="button"
+                  disabled={saving}
                   onClick={() => {
                     setIsFormOpen(false)
                     setEditing(null)
                     setImagePreview(null)
                     setImageFile(null)
                   }}
-                  className="px-6 py-2 rounded-xl border border-white text-white hover:bg-gray-700"
+                  className="px-6 py-2 rounded-xl border border-white text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary px-6 py-2 rounded-xl">
-                  {editing ? 'Update' : 'Add'}
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="btn-primary px-6 py-2 rounded-xl inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {saving && <span className="spinner" aria-hidden="true" />}
+                  <span>{saving ? 'Saving…' : editing ? 'Update' : 'Add'}</span>
                 </button>
               </div>
             </form>

@@ -33,6 +33,7 @@ export default function AdminCrudPage({
   const [error, setError] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editing, setEditing] = useState<Record<string, any>>({})
+  const [saving, setSaving] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -65,6 +66,8 @@ export default function AdminCrudPage({
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (saving) return
+    setSaving(true)
     try {
       const id = editing[idKey]
       if (id) {
@@ -79,6 +82,8 @@ export default function AdminCrudPage({
       load()
     } catch (err) {
       toast.error(`Failed to save: ${err instanceof Error ? err.message : 'Unknown error'}`)
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -249,13 +254,19 @@ export default function AdminCrudPage({
               <div className="flex justify-end gap-3 mt-6">
                 <button
                   type="button"
+                  disabled={saving}
                   onClick={() => setIsFormOpen(false)}
-                  className="px-6 py-2 rounded-xl border border-white text-white hover:bg-gray-700"
+                  className="px-6 py-2 rounded-xl border border-white text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary px-6 py-2 rounded-xl">
-                  Save
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="btn-primary px-6 py-2 rounded-xl inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {saving && <span className="spinner" aria-hidden="true" />}
+                  <span>{saving ? 'Saving…' : 'Save'}</span>
                 </button>
               </div>
             </form>

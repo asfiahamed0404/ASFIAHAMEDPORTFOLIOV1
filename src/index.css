@@ -664,6 +664,184 @@ html { scroll-behavior: smooth; }
   background-size: 24px 24px;
 }
 
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 9999px;
+  animation: spin 0.7s linear infinite;
+  vertical-align: -2px;
+}
+
+/* Visually hide but keep accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Admin certificate image upload -- empty / filled states */
+.cert-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px dashed rgba(165, 180, 252, 0.35);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08), transparent 70%),
+    rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
+}
+
+.cert-upload--empty {
+  gap: 14px;
+  padding: 18px 18px;
+  cursor: pointer;
+  min-height: 110px;
+}
+.cert-upload--empty:hover {
+  border-color: rgba(165, 180, 252, 0.65);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.16), transparent 70%),
+    rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25) inset,
+              0 12px 30px -18px rgba(99, 102, 241, 0.5);
+  transform: translateY(-1px);
+}
+
+.cert-upload--dragover {
+  border-style: solid;
+  border-color: rgba(199, 210, 254, 0.9);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.28), transparent 70%),
+    rgba(99, 102, 241, 0.12);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.45) inset,
+              0 18px 40px -18px rgba(99, 102, 241, 0.6);
+  transform: translateY(-2px) scale(1.005);
+}
+.cert-upload--dragover .cert-upload-icon {
+  background: rgba(99, 102, 241, 0.4);
+  border-color: rgba(199, 210, 254, 0.7);
+  transform: scale(1.08);
+}
+.cert-upload--dragover .cert-upload-cta {
+  background: rgba(99, 102, 241, 0.95);
+  color: #ffffff;
+  border-color: rgba(199, 210, 254, 0.85);
+}
+
+.cert-upload-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(165, 180, 252, 0.25);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.cert-upload--empty:hover .cert-upload-icon {
+  background: rgba(99, 102, 241, 0.22);
+  transform: scale(1.04);
+}
+
+.cert-upload-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.005em;
+}
+
+.cert-upload-sub {
+  font-size: 11px;
+  color: #a1a1aa;
+  letter-spacing: 0.01em;
+}
+
+.cert-upload-cta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #c7d2fe;
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(165, 180, 252, 0.35);
+  padding: 7px 13px;
+  border-radius: 9999px;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.cert-upload--empty:hover .cert-upload-cta {
+  background: rgba(99, 102, 241, 0.85);
+  color: #ffffff;
+  border-color: rgba(199, 210, 254, 0.7);
+}
+
+.cert-upload--filled {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 10px;
+  gap: 10px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(13, 13, 16, 0.6);
+}
+
+.cert-upload-preview {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cert-upload-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cert-upload-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+.cert-upload-remove:hover {
+  background: rgba(239, 68, 68, 0.85);
+  color: #ffffff;
+  border-color: rgba(254, 202, 202, 0.6);
+}
+
 /* FORM input polish for contact form */
 .form-field {
   background: rgba(255,255,255,0.02);

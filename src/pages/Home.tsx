@@ -1,8 +1,8 @@
-import { useState, useEffect, type FC } from 'react';
+import { useState, useEffect, useLayoutEffect, type FC } from 'react';
 import { motion } from 'framer-motion';
 import {
   Mail, Phone, MapPin, ExternalLink, Download,
-  Calendar, Code2, User, Briefcase, GraduationCap, ArrowRight, Heart
+  Calendar, Code2, User, Briefcase, GraduationCap, ArrowRight, Heart, RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -13,13 +13,7 @@ import logo from '../assets/logo.png';
 import { supabase } from '../lib/supabase';
 import type { Project } from '../lib/supabase';
 import {
-  useProjects,
-  useSkills,
-  useEducation,
-  useExperience,
-  useCertificates,
-  useSiteContent,
-  useSocials,
+  usePortfolioData,
 } from '../hooks/usePortfolioData';
 import BackToTop from '../components/BackToTop';
 import AmbientOrbs from '../components/AmbientOrbs';
@@ -455,17 +449,140 @@ const AppreciateSection: FC = () => {
   );
 };
 
-const Home: FC = () => {
+const PortfolioLoadingScreen: FC = () => (
+  <main
+    className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#030303] px-6 text-white"
+    aria-busy="true"
+    aria-live="polite"
+  >
+    <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(99,102,241,0.18),transparent_32%,rgba(34,211,238,0.10)_52%,transparent_72%,rgba(236,72,153,0.13))]" />
+    <motion.div
+      className="absolute inset-0 opacity-35 [background-image:linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] [background-size:48px_48px]"
+      animate={{ backgroundPosition: ['0px 0px', '48px 48px'] }}
+      transition={{ repeat: Infinity, duration: 6, ease: 'linear' }}
+    />
+    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#818cf8] to-transparent" />
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+      className="relative z-10 flex w-full max-w-md flex-col items-center text-center"
+      role="status"
+    >
+      <div className="relative mb-9 h-32 w-32">
+        <motion.div
+          className="absolute inset-0 rounded-[2.4rem] bg-[conic-gradient(from_90deg,transparent_0deg,#22d3ee_70deg,#818cf8_160deg,#ec4899_245deg,transparent_360deg)]"
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 3.2, ease: 'linear' }}
+        />
+        <div className="absolute inset-[5px] rounded-[2.1rem] bg-[#030303]" />
+        <motion.div
+          className="absolute inset-3 flex items-center justify-center rounded-[1.7rem] border border-white/10 bg-white/[0.045] shadow-2xl backdrop-blur"
+          animate={{
+            scale: [1, 1.035, 1],
+            boxShadow: [
+              '0 18px 60px rgba(99,102,241,0.18)',
+              '0 26px 80px rgba(34,211,238,0.22)',
+              '0 18px 60px rgba(99,102,241,0.18)',
+            ],
+          }}
+          transition={{ repeat: Infinity, duration: 2.4, ease: 'easeInOut' }}
+        >
+          <img src={logo} alt="Asfi Ahamed" className="h-14 w-14 object-contain" />
+        </motion.div>
+      </div>
+      <p className="font-mono text-xs uppercase tracking-[0.32em] text-[#818cf8]">Asfi Ahamed</p>
+      <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Loading portfolio</h1>
+      <p className="mt-4 max-w-sm text-sm leading-6 text-[#a1a1aa]">
+        Preparing the latest projects, skills, and story.
+      </p>
+      <div className="mt-9 flex items-center gap-2" aria-hidden="true">
+        {[0, 1, 2].map((dot) => (
+          <motion.span
+            key={dot}
+            className="h-2 w-2 rounded-full bg-[#a5b4fc]"
+            animate={{ opacity: [0.35, 1, 0.35], y: [0, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 1.15, delay: dot * 0.16, ease: 'easeInOut' }}
+          />
+        ))}
+      </div>
+      <div className="mt-6 h-1 w-64 overflow-hidden rounded-full bg-[#27272a]">
+        <motion.div
+          className="h-full w-28 rounded-full bg-gradient-to-r from-[#22d3ee] via-[#818cf8] to-[#ec4899]"
+          animate={{ x: [-96, 256] }}
+          transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }}
+        />
+      </div>
+      <span className="sr-only">Loading portfolio content</span>
+    </motion.div>
+  </main>
+);
+
+const PortfolioRetryScreen: FC<{ message: string; onRetry: () => void }> = ({ message, onRetry }) => (
+  <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#030303] px-6 text-white">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.22),transparent_34%),radial-gradient(circle_at_80%_70%,rgba(236,72,153,0.10),transparent_30%)]" />
+    <div className="relative z-10 w-full max-w-lg rounded-[2rem] border border-[#27272a] bg-[#0a0a0c]/90 p-8 text-center shadow-2xl shadow-black/40 backdrop-blur">
+      <img src={logo} alt="Asfi Ahamed" className="mx-auto mb-6 h-14 w-14 object-contain" />
+      <p className="font-mono text-xs uppercase tracking-[0.28em] text-[#818cf8]">Portfolio</p>
+      <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">Could not load just now</h1>
+      <p className="mx-auto mt-4 max-w-sm text-sm leading-6 text-[#a1a1aa]">
+        The portfolio content could not be reached. Please try again in a moment.
+      </p>
+      <p className="mt-3 text-xs text-[#71717a]">{message}</p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="btn-primary mx-auto mt-8 flex h-12 items-center justify-center gap-2 rounded-2xl px-6 text-sm font-medium"
+      >
+        <RefreshCw size={16} />
+        Retry
+      </button>
+    </div>
+  </main>
+);
+
+interface PortfolioContentProps {
+  onRetry: () => void;
+}
+
+const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [minimumLoaderElapsed, setMinimumLoaderElapsed] = useState(false);
 
-  const { projects } = useProjects();
-  const { skills } = useSkills();
-  const { education } = useEducation();
-  const { experience } = useExperience();
-  const { certificates } = useCertificates();
-  const { content: siteContent } = useSiteContent();
-  const { socials } = useSocials();
+  const {
+    projects: { projects },
+    skills: { skills },
+    education: { education },
+    experience: { experience },
+    certificates: { certificates },
+    siteContent: { content: siteContent },
+    socials: { socials },
+    loading: portfolioLoading,
+    error: portfolioError,
+  } = usePortfolioData();
+
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      setMinimumLoaderElapsed(true);
+    }, 3000);
+
+    return () => window.clearTimeout(timerId);
+  }, []);
+
+  const showPortfolioLoader = portfolioLoading || !minimumLoaderElapsed;
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [showPortfolioLoader, portfolioError]);
+
+  if (showPortfolioLoader) {
+    return <PortfolioLoadingScreen />;
+  }
+
+  if (portfolioError) {
+    return <PortfolioRetryScreen message={portfolioError} onRetry={onRetry} />;
+  }
 
   // Calculate content visibility
   const hasProjects = projects.length > 0;
@@ -761,7 +878,7 @@ const Home: FC = () => {
       )}
 
       {/* CERTIFICATES */}
-      <CertificatesSection />
+      <CertificatesSection certificates={certificates} />
 
       {/* APPRECIATE */}
       <AppreciateSection />
@@ -851,6 +968,17 @@ const Home: FC = () => {
       <BackToTop />
       </div>
     </div>
+  );
+};
+
+const Home: FC = () => {
+  const [retryKey, setRetryKey] = useState(0);
+
+  return (
+    <PortfolioContent
+      key={retryKey}
+      onRetry={() => setRetryKey((currentKey) => currentKey + 1)}
+    />
   );
 };
 

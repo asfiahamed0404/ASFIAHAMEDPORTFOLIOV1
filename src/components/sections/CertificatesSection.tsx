@@ -1,16 +1,17 @@
-import { Award, Maximize2, X } from 'lucide-react';
-import { useCertificates } from '../../hooks/usePortfolioData';
 import { useState } from 'react';
 import type { FC } from 'react';
+import { Award, Maximize2, X } from 'lucide-react';
+import type { Certificate } from '../../lib/supabase';
 import SectionHeading from '../SectionHeading';
 
-const CertificatesSection: FC = () => {
-  const { certificates, loading, error } = useCertificates();
+interface CertificatesSectionProps {
+  certificates: Certificate[];
+}
+
+const CertificatesSection: FC<CertificatesSectionProps> = ({ certificates }) => {
   const [selectedCertificateImageUrl, setSelectedCertificateImageUrl] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (loading) return <div className="text-white text-center py-20">Loading certificates…</div>;
-  if (error) return <div className="text-red-400 text-center py-20">Failed to load certificates</div>;
   if (certificates.length === 0) return null;
 
   const openImage = (url: string) => {
@@ -77,7 +78,6 @@ const CertificatesSection: FC = () => {
           })}
         </div>
       </div>
-      {/* Modal */}
       {isModalOpen && selectedCertificateImageUrl && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"

@@ -214,27 +214,21 @@ const certificateData = {
     load()
   }, [load])
 
-  if (loading) return <div className="text-white">Loading...</div>
+  if (loading) return <div className="admin-loading">Loading certificates...</div>
 
 if (error) {
   return (
-    <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-gray-800 text-white rounded-xl p-6 shadow-lg">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-white text-2xl">Certificates</h1>
-        <button
-          onClick={() => {
-            setEditing(null)
-            setIsFormOpen(true)
-          }}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded flex items-center gap-2"
-        >
-          <Plus size={16} /> Add
-        </button>
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <p className="admin-kicker">Credential library</p>
+          <h1 className="admin-page-title">Certificates</h1>
+        </div>
       </div>
-      <div className="bg-red-900/20 border border-red-800 rounded-3xl p-8 text-center">
-        <p className="text-red-400 mb-4">Failed to load certificates</p>
-        <p className="text-gray-300 text-sm mb-4">{error}</p>
-        <button onClick={load} className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded mt-2">
+      <div className="admin-error-panel">
+        <p className="text-red-300 mb-3">Failed to load certificates</p>
+        <p className="text-sm mb-5 text-[#d4d4d8]">{error}</p>
+        <button type="button" onClick={load} className="admin-primary-action">
           Retry
         </button>
       </div>
@@ -243,73 +237,77 @@ if (error) {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-white text-2xl">Certificates</h1>
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <p className="admin-kicker">Credential library</p>
+          <h1 className="admin-page-title">Certificates</h1>
+        </div>
         <button
           onClick={() => {
             setEditing(null)
             setIsFormOpen(true)
           }}
-          className="btn-primary px-4 py-2 rounded-xl flex items-center gap-2"
+          className="admin-primary-action"
         >
-          <Plus size={16} /> Add
+          <Plus size={16} /> Add Certificate
         </button>
       </div>
 
-      <div className="bg-[#1a1a2e] border border-gray-600 rounded-3xl overflow-hidden shadow-md">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-[#2c2c3a] text-white">
+      <div className="admin-table-shell">
+        <table className="admin-table">
+          <thead>
             <tr>
               {certificateFields
                 .filter(f => f.type !== 'textarea')
                 .slice(0, 2)
                 .map(col => (
-                  <th key={col.key} className="p-4 font-medium">
+                  <th key={col.key}>
                     {col.label}
                   </th>
                 ))}
-              <th className="p-4 font-medium text-right">Actions</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {certificates.map(cert => (
-              <tr
-                key={cert.id}
-                className="border-t border-[#27272a] hover:bg-[#18181b]"
-              >
-{certificateFields
+              <tr key={cert.id}>
+                {certificateFields
                    .filter(f => f.type !== 'textarea')
                    .slice(0, 2)
                    .map(col => (
-                     <td key={col.key} className="p-4">
-                       {String((cert as any)[col.key] || '')}
+                     <td key={col.key}>
+                       {String(cert[col.key as keyof Certificate] || '')}
                      </td>
                    ))}
-                <td className="p-4 flex justify-end gap-2">
-                  <button
-                    onClick={() => {
-                      setEditing(cert)
-                      setIsFormOpen(true)
-                      // Set image preview if exists
-                      if (cert.image_url) {
-                        setImagePreview(cert.image_url)
-                        setImageFile(null)
-                      } else {
-                        setImagePreview(null)
-                        setImageFile(null)
-                      }
-                    }}
-                    className="p-2 rounded-lg hover:bg-[#27272a] transition-colors"
-                  >
-                    <Pencil size={16} className="text-white" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(cert.id)}
-                    className="p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
-                  >
-                    <Trash size={16} />
-                  </button>
+                <td>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={() => {
+                        setEditing(cert)
+                        setIsFormOpen(true)
+                        // Set image preview if exists
+                        if (cert.image_url) {
+                          setImagePreview(cert.image_url)
+                          setImageFile(null)
+                        } else {
+                          setImagePreview(null)
+                          setImageFile(null)
+                        }
+                      }}
+                      className="admin-icon-button"
+                      aria-label="Edit certificate"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(cert.id)}
+                      className="admin-icon-button admin-icon-button-danger"
+                      aria-label="Delete certificate"
+                    >
+                      <Trash size={16} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -317,7 +315,7 @@ if (error) {
               <tr>
                 <td
                   colSpan={certificateFields.filter(f => f.type !== 'textarea').slice(0, 2).length + 1}
-                  className="p-8 text-center text-[#71717a]"
+                  className="admin-empty-cell"
                 >
                   No certificates found.
                 </td>
@@ -447,7 +445,7 @@ if (error) {
                   className="admin-btn admin-btn-primary"
                 >
                   {saving && <span className="spinner" aria-hidden="true" />}
-                  <span>{saving ? 'Saving…' : editing ? 'Update' : 'Add'}</span>
+                  <span>{saving ? 'Saving...' : editing ? 'Update' : 'Add'}</span>
                 </button>
               </div>
             </form>

@@ -1,18 +1,22 @@
-import { Outlet, NavLink } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
+import { useState } from 'react'
+import { NavLink, Outlet } from 'react-router-dom'
 import { toast } from 'sonner'
 import {
-  LayoutDashboard,
+  Award,
   Briefcase,
   Code2,
-  GraduationCap,
   FileText,
-  Award,
+  Globe,
+  GraduationCap,
   Layers,
+  LayoutDashboard,
   Link2,
   LogOut,
-  Globe,
+  Menu,
+  X,
 } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
+import logo from '../assets/logo.png'
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -28,6 +32,7 @@ const navItems = [
 
 export default function AdminLayout() {
   const { logout } = useAuth()
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleLogout = async () => {
     const { error } = await logout()
@@ -38,52 +43,69 @@ export default function AdminLayout() {
     }
   }
 
+  const renderSidebar = () => (
+    <aside className="admin-sidebar">
+      <div className="admin-sidebar-brand">
+        <span className="brand-mark">
+          <img src={logo} alt="Asfi Ahamed" className="h-8 w-8 object-contain" />
+        </span>
+        <div>
+          <div className="text-lg font-semibold text-white">Admin Studio</div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#7dd3fc]">Portfolio CMS</div>
+        </div>
+      </div>
+
+      <nav className="admin-nav">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.to === '/admin'}
+            onClick={() => setIsOpen(false)}
+            className={({ isActive }) => `admin-nav-link ${isActive ? 'admin-nav-link-active' : ''}`}
+          >
+            <item.icon size={18} />
+            <span>{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
+
+      <div className="admin-sidebar-actions">
+        <a href="/" className="admin-nav-link">
+          <Globe size={18} />
+          <span>View Site</span>
+        </a>
+        <button type="button" onClick={handleLogout} className="admin-nav-link admin-nav-link-danger">
+          <LogOut size={18} />
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+  )
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-gray-900 text-white flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-indigo-800 text-white border-r border-indigo-700 flex flex-col shadow-lg">
-        <div className="p-6 border-b border-[#27272a]">
-          <div className="text-white font-semibold text-xl">Admin</div>
+    <div className="admin-shell">
+      <div className="admin-mobile-topbar">
+        <div className="flex items-center gap-3">
+          <span className="brand-mark">
+            <img src={logo} alt="Asfi Ahamed" className="h-7 w-7 object-contain" />
+          </span>
+          <span className="font-semibold text-white">Admin Studio</span>
         </div>
+        <button
+          type="button"
+          onClick={() => setIsOpen((open) => !open)}
+          className="admin-menu-button"
+          aria-label={isOpen ? 'Close admin navigation' : 'Open admin navigation'}
+        >
+          {isOpen ? <X size={19} /> : <Menu size={19} />}
+        </button>
+      </div>
 
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/admin'}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-colors ${
-                  isActive
-                    ? 'bg-indigo-600 text-white'
-                    : 'text-gray-300 hover:bg-indigo-800'
-                }`
-              }
-            >
-              <item.icon size={18} />
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+      <div className="admin-desktop-sidebar">{renderSidebar()}</div>
+      {isOpen && <div className="admin-mobile-sidebar">{renderSidebar()}</div>}
 
-        <div className="p-3 border-t border-[#27272a] space-y-1">
-          <a
-            href="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-gray-300 hover:bg-indigo-800 transition-colors"
-          >
-            <Globe size={18} /> View Site
-          </a>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-red-400 hover:bg-red-900/20 transition-colors w-full"
-          >
-            <LogOut size={18} /> Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto bg-[#121214] text-gray-100">
+      <main className="admin-main">
         <Outlet />
       </main>
     </div>

@@ -30,7 +30,7 @@ function App() {
           <Route path="/admin/certificates" element={<AdminCertificates />} />
           <Route path="/admin/site-content" element={<AdminSiteContent />} />
           <Route path="/admin/socials" element={<AdminSocials />} />
-            <Route path="/admin/branding" element={<AdminBranding />} />
+          <Route path="/admin/branding" element={<AdminBranding />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

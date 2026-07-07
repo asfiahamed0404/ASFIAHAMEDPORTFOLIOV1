@@ -21,12 +21,20 @@ const fields = [
 export default function AdminSiteContent() {
   const [content, setContent] = useState<SiteContent | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
   const load = useCallback(async () => {
-    const data = await getSiteContent()
-    if (data) setContent(data)
-    setLoading(false)
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await getSiteContent()
+      if (data) setContent(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -47,46 +55,77 @@ export default function AdminSiteContent() {
     }
   }
 
-  if (loading) return <div className="text-white">Loading...</div>
+  if (loading) return <div className="admin-loading">Loading site content...</div>
+
+  if (error) {
+    return (
+      <div className="admin-page">
+        <div className="admin-page-header">
+          <div>
+            <p className="admin-kicker">Homepage copy</p>
+            <h1 className="admin-page-title">Site Content</h1>
+          </div>
+        </div>
+        <div className="admin-error-panel">
+          <p className="text-red-300 mb-3">Failed to load site content</p>
+          <p className="text-sm mb-5 text-[#d4d4d8]">{error}</p>
+          <button type="button" onClick={load} className="admin-primary-action">
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 text-white rounded-xl p-6 shadow-lg">
-      <h1 className="text-white text-2xl mb-6">Site Content</h1>
-      <form onSubmit={handleSave} className="space-y-4 max-w-2xl">
-        {fields.map((field) => (
-          <div key={field.key}>
-            <label className="block text-sm text-white mb-2">
-              {field.label}
-            </label>
-            {field.type === 'textarea' ? (
-              <textarea
-                className="form-input w-full rounded-2xl px-4 py-3 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300 resize-none"
-                rows={4}
-                value={content?.[field.key as keyof SiteContent] as string || ''}
-                onChange={(e) =>
-                  setContent((prev) =>
-                    prev ? { ...prev, [field.key]: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <input
-                type="text"
-                className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
-                value={content?.[field.key as keyof SiteContent] as string || ''}
-                onChange={(e) =>
-                  setContent((prev) =>
-                    prev ? { ...prev, [field.key]: e.target.value } : null
-                  )
-                }
-              />
-            )}
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <p className="admin-kicker">Homepage copy</p>
+          <h1 className="admin-page-title">Site Content</h1>
+        </div>
+      </div>
+
+      <div className="admin-content-panel">
+        <form onSubmit={handleSave} className="admin-form-grid admin-form-wide">
+          {fields.map((field) => (
+            <div key={field.key} className="admin-field">
+              <label className="admin-field-label">
+                {field.label}
+              </label>
+              {field.type === 'textarea' ? (
+                <textarea
+                  className="admin-textarea"
+                  rows={4}
+                  value={content?.[field.key as keyof SiteContent] as string || ''}
+                  onChange={(e) =>
+                    setContent((prev) =>
+                      prev ? { ...prev, [field.key]: e.target.value } : null
+                    )
+                  }
+                />
+              ) : (
+                <input
+                  type="text"
+                  className="admin-input"
+                  value={content?.[field.key as keyof SiteContent] as string || ''}
+                  onChange={(e) =>
+                    setContent((prev) =>
+                      prev ? { ...prev, [field.key]: e.target.value } : null
+                    )
+                  }
+                />
+              )}
+            </div>
+          ))}
+          <div className="admin-actions">
+            <button type="submit" disabled={saving || !content} className="admin-btn admin-btn-primary">
+              {saving && <span className="spinner" aria-hidden="true" />}
+              <span>{saving ? 'Saving...' : 'Save changes'}</span>
+            </button>
           </div>
-        ))}
-        <button type="submit" disabled={saving} className="btn-primary px-6 py-2 rounded-xl mt-4">
-          {saving ? 'Saving...' : 'Save'}
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   )
 }

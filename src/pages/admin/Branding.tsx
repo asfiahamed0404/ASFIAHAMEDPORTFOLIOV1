@@ -19,7 +19,7 @@ async function uploadFile(file: File, path: string): Promise<string | null> {
 }
 
 export default function AdminBranding() {
-  const { content } = useSiteContent();
+  const { content, loading, error } = useSiteContent();
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null);
@@ -59,30 +59,60 @@ export default function AdminBranding() {
     }
   };
 
+  if (loading) return <div className="admin-loading">Loading branding assets...</div>;
+
+  if (error) {
+    return (
+      <div className="admin-page">
+        <div className="admin-page-header">
+          <div>
+            <p className="admin-kicker">Visual identity</p>
+            <h1 className="admin-page-title">Branding</h1>
+          </div>
+        </div>
+        <div className="admin-error-panel">
+          <p className="text-red-300 mb-3">Failed to load branding assets</p>
+          <p className="text-sm mb-5 text-[#d4d4d8]">{error}</p>
+          <button type="button" onClick={() => window.location.reload()} className="admin-primary-action">
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="admin-modal-panel max-w-2xl mx-auto mt-2">
-      <h2 className="admin-modal-title">Branding Assets</h2>
-      <div className="admin-form-grid">
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <p className="admin-kicker">Visual identity</p>
+          <h1 className="admin-page-title">Branding</h1>
+        </div>
+      </div>
+
+      <div className="admin-content-panel admin-branding-panel">
+        <div className="admin-form-grid admin-form-wide">
         <div className="admin-field">
           <label className="admin-field-label">Website Logo</label>
-          {logoUrl && <img src={logoUrl} alt="Logo" className="h-10 mb-2 rounded-md" />}
+          {logoUrl && <img src={logoUrl} alt="Logo" className="admin-asset-preview admin-asset-preview-logo" />}
           <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'logo')} className="admin-input cursor-pointer" />
         </div>
         <div className="admin-field">
           <label className="admin-field-label">Profile Portrait</label>
-          {portraitUrl && <img src={portraitUrl} alt="Portrait" className="h-20 mb-2 rounded-md" />}
+          {portraitUrl && <img src={portraitUrl} alt="Portrait" className="admin-asset-preview admin-asset-preview-portrait" />}
           <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'portrait')} className="admin-input cursor-pointer" />
         </div>
         <div className="admin-field">
           <label className="admin-field-label">Hero Image</label>
-          {heroImageUrl && <img src={heroImageUrl} alt="Hero" className="h-28 mb-2 rounded-md object-cover" />}
+          {heroImageUrl && <img src={heroImageUrl} alt="Hero" className="admin-asset-preview admin-asset-preview-hero" />}
           <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'hero_image')} className="admin-input cursor-pointer" />
         </div>
         <div className="admin-field">
           <label className="admin-field-label">Favicon (optional)</label>
-          {faviconUrl && <img src={faviconUrl} alt="Favicon" className="h-8 mb-2 rounded-md" />}
+          {faviconUrl && <img src={faviconUrl} alt="Favicon" className="admin-asset-preview admin-asset-preview-favicon" />}
           <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'favicon')} className="admin-input cursor-pointer" />
         </div>
+      </div>
       </div>
     </div>
   );

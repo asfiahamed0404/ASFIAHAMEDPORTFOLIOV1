@@ -11,20 +11,19 @@ interface StatCardProps {
 
 export default function AdminDashboard() {
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-white text-3xl tracking-tight">Dashboard</h1>
-        <p className="text-[#71717a] mt-1">Manage your portfolio content</p>
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <p className="admin-kicker">Portfolio CMS</p>
+          <h1 className="admin-page-title">Dashboard</h1>
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="admin-stat-grid">
         <AdminStatCard title="Projects" getFn={getProjects} icon={Briefcase} />
         <AdminStatCard title="Skills" getFn={getSkills} icon={Code2} />
         <AdminStatCard title="Education" getFn={getEducation} icon={GraduationCap} />
         <AdminStatCard title="Certificates" getFn={getCertificates} icon={Award} />
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4">
         <AdminStatCard title="Experience" getFn={getExperience} icon={FileText} />
         <AdminStatCard title="Social Links" getFn={getSocials} icon={Link2} />
       </div>
@@ -36,16 +35,18 @@ function AdminStatCard({ title, getFn, icon: Icon }: StatCardProps) {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
-    getFn().then((data) => setCount(Array.isArray(data) ? data.length : 0))
+    getFn()
+      .then((data) => setCount(Array.isArray(data) ? data.length : 0))
+      .catch(() => setCount(0))
   }, [getFn])
 
   return (
-    <div className="bg-[#1a1a2e] border border-gray-600 rounded-3xl p-6 hover:border-indigo-600 transition-colors shadow-md">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="p-2 bg-[#6366f1]/10 rounded-xl text-[#818cf8]">
+    <div className="admin-stat-card">
+      <div className="flex items-center gap-3">
+        <div className="admin-stat-icon">
           <Icon size={24} />
         </div>
-        <div className="text-sm text-[#71717a]">{title}</div>
+        <div className="text-sm text-[#a1a1aa]">{title}</div>
       </div>
       <div className="text-3xl font-bold text-white">{count}</div>
     </div>

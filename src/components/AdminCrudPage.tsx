@@ -92,27 +92,21 @@ export default function AdminCrudPage({
   const displayColumns = fields.filter((f) => f.type !== 'textarea').slice(0, 2)
   const singular = singularTitle ?? (title.endsWith('s') ? title.slice(0, -1) : title)
 
-  if (loading) return <div className="text-white">Loading...</div>
+  if (loading) return <div className="admin-loading">Loading {title.toLowerCase()}...</div>
 
   if (error) {
     return (
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-white text-2xl">{title}</h1>
-          <button
-            onClick={() => {
-              setEditing({})
-              setIsFormOpen(true)
-            }}
-            className="btn-primary px-4 py-2 rounded-xl flex items-center gap-2"
-          >
-            <Plus size={16} /> Add
-          </button>
+      <div className="admin-page">
+        <div className="admin-page-header">
+          <div>
+            <p className="admin-kicker">Content manager</p>
+            <h1 className="admin-page-title">{title}</h1>
+          </div>
         </div>
-        <div className="bg-red-900/20 border border-red-800 rounded-3xl p-8 text-center">
-          <p className="text-red-400 mb-4">Failed to load {title.toLowerCase()}</p>
-          <p className="text-white text-sm mb-4">{error}</p>
-          <button onClick={load} className="btn-primary px-4 py-2 rounded-xl">
+        <div className="admin-error-panel">
+          <p className="text-red-300 mb-3">Failed to load {title.toLowerCase()}</p>
+          <p className="text-sm mb-5 text-[#d4d4d8]">{error}</p>
+          <button onClick={load} className="admin-primary-action">
             Retry
           </button>
         </div>
@@ -121,61 +115,65 @@ export default function AdminCrudPage({
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-white text-2xl">{title}</h1>
+    <div className="admin-page">
+      <div className="admin-page-header">
+        <div>
+          <p className="admin-kicker">Content manager</p>
+          <h1 className="admin-page-title">{title}</h1>
+        </div>
         <button
           onClick={() => {
             setEditing({})
             setIsFormOpen(true)
           }}
-          className="btn-primary px-4 py-2 rounded-xl flex items-center gap-2"
+          className="admin-primary-action"
         >
-          <Plus size={16} /> Add
+          <Plus size={16} /> Add {singular}
         </button>
       </div>
 
-      <div className="bg-[#1a1a2e] border border-gray-600 rounded-3xl overflow-hidden shadow-md">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-[#18181b] text-white">
+      <div className="admin-table-shell">
+        <table className="admin-table">
+          <thead>
             <tr>
               {displayColumns.map((col) => (
-                <th key={col.key} className="p-4 font-medium">
+                <th key={col.key}>
                   {col.label}
                 </th>
               ))}
-              <th className="p-4 font-medium text-right">Actions</th>
+              <th className="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr
-                key={item[idKey]}
-                className="border-t border-[#27272a] hover:bg-[#18181b]"
-              >
+              <tr key={item[idKey]}>
                 {displayColumns.map((col) => (
-                  <td key={col.key} className="p-4">
+                  <td key={col.key}>
                     {Array.isArray(item[col.key])
                       ? item[col.key].join(', ')
                       : String(item[col.key] || '')}
                   </td>
                 ))}
-                <td className="p-4 flex justify-end gap-2">
-                  <button
-                    onClick={() => {
-                      setEditing(item)
-                      setIsFormOpen(true)
-                    }}
-                    className="p-2 rounded-lg hover:bg-[#27272a] transition-colors"
-                  >
-                    <Pencil size={16} className="text-white" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(item[idKey])}
-                    className="p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
-                  >
-                    <Trash size={16} />
-                  </button>
+                <td>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={() => {
+                        setEditing(item)
+                        setIsFormOpen(true)
+                      }}
+                      className="admin-icon-button"
+                      aria-label={`Edit ${singular}`}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item[idKey])}
+                      className="admin-icon-button admin-icon-button-danger"
+                      aria-label={`Delete ${singular}`}
+                    >
+                      <Trash size={16} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -183,7 +181,7 @@ export default function AdminCrudPage({
               <tr>
                 <td
                   colSpan={displayColumns.length + 1}
-                  className="p-8 text-center text-gray-300"
+                  className="admin-empty-cell"
                 >
                   No items found.
                 </td>
@@ -273,7 +271,7 @@ export default function AdminCrudPage({
                   className="admin-btn admin-btn-primary"
                 >
                   {saving && <span className="spinner" aria-hidden="true" />}
-                  <span>{saving ? 'Saving…' : 'Save'}</span>
+                  <span>{saving ? 'Saving...' : 'Save'}</span>
                 </button>
               </div>
             </form>

@@ -13,6 +13,7 @@ export default function AdminSocials() {
   return (
     <AdminCrudPage
       title="Socials"
+      singularTitle="Social"
       fields={socialFields}
       getFn={getSocials}
       createFn={createSocials}

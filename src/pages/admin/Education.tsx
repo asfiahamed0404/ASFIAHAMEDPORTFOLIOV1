@@ -14,6 +14,7 @@ export default function AdminEducation() {
   return (
     <AdminCrudPage
       title="Education"
+      singularTitle="Education Entry"
       fields={educationFields}
       getFn={getEducation}
       createFn={createEducation}

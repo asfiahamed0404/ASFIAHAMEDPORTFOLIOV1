@@ -11,6 +11,7 @@ export interface AdminField {
 
 interface AdminCrudPageProps {
   title: string
+  singularTitle?: string
   fields: AdminField[]
   getFn: () => Promise<any[]>
   createFn: (data: any) => Promise<any>
@@ -21,6 +22,7 @@ interface AdminCrudPageProps {
 
 export default function AdminCrudPage({
   title,
+  singularTitle,
   fields,
   getFn,
   createFn,
@@ -88,6 +90,7 @@ export default function AdminCrudPage({
   }
 
   const displayColumns = fields.filter((f) => f.type !== 'textarea').slice(0, 2)
+  const singular = singularTitle ?? (title.endsWith('s') ? title.slice(0, -1) : title)
 
   if (loading) return <div className="text-white">Loading...</div>
 
@@ -191,22 +194,24 @@ export default function AdminCrudPage({
       </div>
 
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 border border-white rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl text-white">
-            <h2 className="text-white text-xl mb-6">
-              {editing[idKey] ? 'Edit' : 'Add'} {title.slice(0, -1)}
+        <div className="admin-modal-backdrop" onClick={() => !saving && setIsFormOpen(false)}>
+          <div
+            className="admin-modal-panel"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="admin-modal-title">
+              {editing[idKey] ? `Edit ${singular}` : `Add ${singular}`}
             </h2>
-            <form onSubmit={handleSave} className="space-y-4">
+            <form onSubmit={handleSave} className="admin-form-grid">
               {fields.map((field) => (
-                <div key={field.key}>
-                  <label className="block text-sm text-white mb-2">
-                    {field.label}
-                  </label>
+                <div key={field.key} className="admin-field">
+                  <label className="admin-field-label">{field.label}</label>
                   {field.type === 'textarea' ? (
                     <textarea
                       required={field.required}
-                      className="form-input w-full rounded-2xl px-4 py-3 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-black placeholder-gray-500 resize-none"
+                      className="admin-textarea"
                       rows={4}
+                      placeholder={field.label}
                       value={editing[field.key] || ''}
                       onChange={(e) =>
                         setEditing((prev) => ({
@@ -219,7 +224,8 @@ export default function AdminCrudPage({
                     <input
                       type="text"
                       required={field.required}
-                      className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-black placeholder-gray-500"
+                      placeholder="Comma separated"
+                      className="admin-input"
                       value={
                         Array.isArray(editing[field.key])
                           ? editing[field.key].join(', ')
@@ -239,7 +245,8 @@ export default function AdminCrudPage({
                     <input
                       type={field.type === 'number' ? 'number' : 'text'}
                       required={field.required}
-                      className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-black placeholder-gray-500"
+                      placeholder={field.label}
+                      className="admin-input"
                       value={editing[field.key] || ''}
                       onChange={(e) =>
                         setEditing((prev) => ({
@@ -251,19 +258,19 @@ export default function AdminCrudPage({
                   )}
                 </div>
               ))}
-              <div className="flex justify-end gap-3 mt-6">
+              <div className="admin-actions">
                 <button
                   type="button"
                   disabled={saving}
                   onClick={() => setIsFormOpen(false)}
-                  className="px-6 py-2 rounded-xl border border-white text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="admin-btn admin-btn-ghost"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="btn-primary px-6 py-2 rounded-xl inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="admin-btn admin-btn-primary"
                 >
                   {saving && <span className="spinner" aria-hidden="true" />}
                   <span>{saving ? 'Saving…' : 'Save'}</span>

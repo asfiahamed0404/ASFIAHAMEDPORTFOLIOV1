@@ -13,6 +13,7 @@ export default function AdminSkills() {
   return (
     <AdminCrudPage
       title="Skills"
+      singularTitle="Skill"
       fields={skillFields}
       getFn={getSkills}
       createFn={createSkill}

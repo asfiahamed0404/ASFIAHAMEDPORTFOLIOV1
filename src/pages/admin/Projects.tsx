@@ -19,6 +19,7 @@ export default function AdminProjects() {
   return (
     <AdminCrudPage
       title="Projects"
+      singularTitle="Project"
       fields={projectFields}
       getFn={getProjects}
       createFn={createProject}

@@ -329,58 +329,56 @@ if (error) {
 
       {/* Form Modal */}
       {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 border border-white rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl text-white">
-            <h2 className="text-white text-xl mb-6">
-              {editing ? 'Edit' : 'Add'} Certificate
+        <div className="admin-modal-backdrop" onClick={() => !saving && setIsFormOpen(false)}>
+          <div
+            className="admin-modal-panel"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="admin-modal-title">
+              {editing ? 'Edit Certificate' : 'Add Certificate'}
             </h2>
-            <form onSubmit={handleFormSubmit} className="space-y-4">
+            <form onSubmit={handleFormSubmit} className="admin-form-grid">
               {/* Name */}
-              <div>
-                <label className="block text-sm text-white mb-2">
-                  Name
-                </label>
+              <div className="admin-field">
+                <label className="admin-field-label">Name</label>
                 <input
                   name="name"
                   type="text"
                   required
-                  className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
+                  placeholder="Certificate title"
+                  className="admin-input"
                   value={editing?.name || ''}
                   onChange={handleInputChange}
                 />
               </div>
               {/* Issuer */}
-              <div>
-                <label className="block text-sm text-white mb-2">
-                  Issuer
-                </label>
+              <div className="admin-field">
+                <label className="admin-field-label">Issuer</label>
                 <input
                   name="issuer"
                   type="text"
                   required
-                  className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
+                  placeholder="e.g. Kaggle, AWS"
+                  className="admin-input"
                   value={editing?.issuer || ''}
                   onChange={handleInputChange}
                 />
               </div>
               {/* Display Order */}
-              <div>
-                <label className="block text-sm text-white mb-2">
-                  Display Order
-                </label>
+              <div className="admin-field">
+                <label className="admin-field-label">Display Order</label>
                 <input
                   name="display_order"
                   type="number"
-                  className="form-input w-full rounded-2xl px-4 h-12 bg-white/10 border border-white focus:ring-2 focus:ring-white focus:border-white text-white placeholder-gray-300"
+                  placeholder="0"
+                  className="admin-input"
                   value={editing?.display_order?.toString() || ''}
                   onChange={handleInputChange}
                 />
               </div>
               {/* Image Upload */}
-              <div>
-                <label className="block text-sm text-white mb-2">
-                  Certificate Image (PNG, JPG, WEBP, GIF)
-                </label>
+              <div className="admin-field">
+                <label className="admin-field-label">Certificate Image (PNG, JPG, WEBP, GIF)</label>
                 {imagePreview ? (
                   <div className="cert-upload cert-upload--filled group">
                     <img
@@ -429,7 +427,7 @@ if (error) {
                 )}
               </div>
               {/* Buttons */}
-              <div className="flex justify-end gap-3 mt-6">
+              <div className="admin-actions">
                 <button
                   type="button"
                   disabled={saving}
@@ -439,14 +437,14 @@ if (error) {
                     setImagePreview(null)
                     setImageFile(null)
                   }}
-                  className="px-6 py-2 rounded-xl border border-white text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="admin-btn admin-btn-ghost"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="btn-primary px-6 py-2 rounded-xl inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="admin-btn admin-btn-primary"
                 >
                   {saving && <span className="spinner" aria-hidden="true" />}
                   <span>{saving ? 'Saving…' : editing ? 'Update' : 'Add'}</span>

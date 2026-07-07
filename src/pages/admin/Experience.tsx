@@ -14,6 +14,7 @@ export default function AdminExperience() {
   return (
     <AdminCrudPage
       title="Experience"
+      singularTitle="Experience Entry"
       fields={experienceFields}
       getFn={getExperience}
       createFn={createExperience}

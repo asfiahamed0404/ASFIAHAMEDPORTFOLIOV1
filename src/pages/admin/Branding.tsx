@@ -60,28 +60,28 @@ export default function AdminBranding() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white rounded-xl shadow-lg">
-      <h1 className="text-white text-2xl mb-6">Branding Assets</h1>
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm text-white mb-2">Website Logo</label>
-          {logoUrl && <img src={logoUrl} alt="Logo" className="h-12 mb-2" />}
-          <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'logo')} className="form-input w-full rounded-2xl border border-white focus:ring-2 focus:ring-white focus:border-white" />
+    <div className="admin-modal-panel max-w-2xl mx-auto mt-2">
+      <h2 className="admin-modal-title">Branding Assets</h2>
+      <div className="admin-form-grid">
+        <div className="admin-field">
+          <label className="admin-field-label">Website Logo</label>
+          {logoUrl && <img src={logoUrl} alt="Logo" className="h-10 mb-2 rounded-md" />}
+          <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'logo')} className="admin-input cursor-pointer" />
         </div>
-        <div>
-          <label className="block text-sm text-white mb-2">Profile Portrait</label>
-          {portraitUrl && <img src={portraitUrl} alt="Portrait" className="h-24 mb-2" />}
-          <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'portrait')} className="form-input w-full rounded-2xl border border-white focus:ring-2 focus:ring-white focus:border-white" />
+        <div className="admin-field">
+          <label className="admin-field-label">Profile Portrait</label>
+          {portraitUrl && <img src={portraitUrl} alt="Portrait" className="h-20 mb-2 rounded-md" />}
+          <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'portrait')} className="admin-input cursor-pointer" />
         </div>
-        <div>
-          <label className="block text-sm text-white mb-2">Hero Image</label>
-          {heroImageUrl && <img src={heroImageUrl} alt="Hero" className="h-32 mb-2" />}
-          <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'hero_image')} className="form-input w-full rounded-2xl border border-white focus:ring-2 focus:ring-white focus:border-white" />
+        <div className="admin-field">
+          <label className="admin-field-label">Hero Image</label>
+          {heroImageUrl && <img src={heroImageUrl} alt="Hero" className="h-28 mb-2 rounded-md object-cover" />}
+          <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'hero_image')} className="admin-input cursor-pointer" />
         </div>
-        <div>
-          <label className="block text-sm text-white mb-2">Favicon (optional)</label>
-          {faviconUrl && <img src={faviconUrl} alt="Favicon" className="h-8 mb-2" />}
-          <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'favicon')} className="form-input w-full rounded-2xl border border-white focus:ring-2 focus:ring-white focus:border-white" />
+        <div className="admin-field">
+          <label className="admin-field-label">Favicon (optional)</label>
+          {faviconUrl && <img src={faviconUrl} alt="Favicon" className="h-8 mb-2 rounded-md" />}
+          <input type="file" accept="image/*" onChange={e => handleFileChange(e, 'favicon')} className="admin-input cursor-pointer" />
         </div>
       </div>
     </div>

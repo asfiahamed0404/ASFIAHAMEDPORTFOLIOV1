@@ -2140,78 +2140,52 @@ html { scroll-behavior: smooth; }
   color: #ffffff;
 }
 
-.appreciate-panel {
-  position: relative;
-  overflow: hidden;
-  border-radius: 30px;
-  border: 1px solid rgba(125, 211, 252, 0.18);
-  background:
-    radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.15), transparent 34%),
-    radial-gradient(circle at 90% 25%, rgba(236, 72, 153, 0.14), transparent 30%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.016)),
-    rgba(8, 8, 11, 0.82);
-  padding: clamp(24px, 5vw, 46px);
-  box-shadow: 0 34px 100px -70px rgba(236, 72, 153, 0.75);
-}
+/* ── Header Heart Button ────────────────────────────────────── */
 
-.appreciate-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%);
-  transform: translateX(-120%);
-  animation: appreciate-sheen 8s ease-in-out infinite;
-}
-
-@keyframes appreciate-sheen {
-  0%, 55% { transform: translateX(-120%); }
-  76%, 100% { transform: translateX(120%); }
-}
-
-.heart-button {
-  display: flex;
-  width: 108px;
-  height: 108px;
+.nav-heart-btn {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 24px 70px -34px rgba(236, 72, 153, 0.75);
-  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
-}
-
-.heart-button:hover {
-  transform: translateY(-2px);
-  border-color: rgba(251, 113, 133, 0.6);
-  background: rgba(251, 113, 133, 0.12);
-}
-
-.heart-button-liked {
-  border-color: rgba(251, 113, 133, 0.72);
-  background: rgba(251, 113, 133, 0.13);
-}
-
-.reaction-chip {
-  display: inline-flex;
-  min-height: 38px;
-  align-items: center;
-  gap: 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.035);
-  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.04);
   color: #d4d4d8;
-  font-size: 13px;
-  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
 }
 
-.reaction-chip:hover,
-.reaction-chip-active {
-  border-color: rgba(125, 211, 252, 0.42);
-  background: rgba(125, 211, 252, 0.1);
-  color: #ffffff;
+.nav-heart-btn:hover {
+  border-color: rgba(251, 113, 133, 0.45);
+  background: rgba(251, 113, 133, 0.08);
+  box-shadow: 0 0 20px -6px rgba(251, 113, 133, 0.35);
 }
+
+.nav-heart-btn:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 2px;
+}
+
+.nav-heart-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.nav-heart-icon {
+  font-size: 20px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-heart-filled {
+  color: #fb7185;
+  filter: drop-shadow(0 0 6px rgba(251, 113, 133, 0.55));
+}
+
 
 .contact-link {
   width: fit-content;
@@ -2511,21 +2485,6 @@ html { scroll-behavior: smooth; }
     font-size: 12px;
   }
 
-  .appreciate-panel {
-    border-radius: 22px;
-    padding: 22px;
-  }
-
-  .heart-button {
-    width: 90px;
-    height: 90px;
-  }
-
-  .reaction-chip {
-    min-height: 36px;
-    padding-inline: 11px;
-    font-size: 12px;
-  }
 
   .contact-link {
     width: 100%;

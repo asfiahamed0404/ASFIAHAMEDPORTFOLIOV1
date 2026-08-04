@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState, type FC } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useLayoutEffect, useRef, useState, useCallback, type FC } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight,
   Award,
@@ -11,7 +11,6 @@ import {
   Download,
   ExternalLink,
   GraduationCap,
-  Heart,
   Layers,
   Mail,
   MapPin,
@@ -29,7 +28,7 @@ import asfiPortrait from '../assets/Asfi_face.png';
 import asfiFull from '../assets/Asfi.png';
 import logo from '../assets/logo.png';
 
-import { supabase } from '../lib/supabase';
+import { submitAppreciation, removeAppreciation } from '../lib/supabase';
 import type { Project, SiteContent, Skill, Social } from '../lib/supabase';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 import BackToTop from '../components/BackToTop';
@@ -119,6 +118,77 @@ const SectionIntro: FC<SectionIntroProps> = ({ icon: Icon, eyebrow, title, subti
   </div>
 );
 
+/* ── HeartButton (header appreciation toggle) ────────────────── */
+
+const VISITOR_KEY = 'asfi_visitor_id';
+const APPRECIATED_KEY = 'asfi_appreciated';
+
+function getVisitorId(): string {
+  let id = localStorage.getItem(VISITOR_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(VISITOR_KEY, id);
+  }
+  return id;
+}
+
+const HeartButton: FC = () => {
+  const [appreciated, setAppreciated] = useState(() => localStorage.getItem(APPRECIATED_KEY) === '1');
+  const [loading, setLoading] = useState(false);
+
+  const handleToggle = useCallback(async () => {
+    if (loading) return;
+    setLoading(true);
+
+    const visitorId = getVisitorId();
+
+    try {
+      if (appreciated) {
+        await removeAppreciation(visitorId);
+        localStorage.setItem(APPRECIATED_KEY, '0');
+        setAppreciated(false);
+      } else {
+        await submitAppreciation(visitorId);
+        localStorage.setItem(APPRECIATED_KEY, '1');
+        setAppreciated(true);
+        toast.success('Thanks for appreciating my work!', { duration: 3000 });
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [appreciated, loading]);
+
+  return (
+    <motion.button
+      type="button"
+      onClick={handleToggle}
+      disabled={loading}
+      whileTap={{ scale: 0.88 }}
+      className="nav-heart-btn"
+      aria-label={appreciated ? 'Remove appreciation' : 'Appreciate this portfolio'}
+      title="Appreciate this portfolio"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={appreciated ? 'filled' : 'outline'}
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.5, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+          className={`nav-heart-icon ${appreciated ? 'nav-heart-filled' : ''}`}
+          aria-hidden="true"
+        >
+          {appreciated ? '\u2665' : '\u2661'}
+        </motion.span>
+      </AnimatePresence>
+    </motion.button>
+  );
+};
+
+/* ── Nav ─────────────────────────────────────────────────────── */
+
 interface NavProps {
   hasAbout: boolean;
   hasEducation: boolean;
@@ -194,6 +264,7 @@ const Nav: FC<NavProps> = ({
         </div>
 
         <div className="flex items-center gap-3">
+          <HeartButton />
           <a
             href={resumeUrl}
             download="Asfi_Ahamed_CV.pdf"
@@ -305,167 +376,7 @@ const ProjectCard: FC<{ project: Project; index: number }> = ({ project, index }
   );
 };
 
-const AppreciateSection: FC = () => {
-  const [liked, setLiked] = useState(false);
-  const [count, setCount] = useState(0);
-  const [reaction, setReaction] = useState<string | null>(null);
-  const [showThanks, setShowThanks] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  const reactions = [
-    { emoji: '\u{1F44F}', label: 'Great work' },
-    { emoji: '\u{1F525}', label: 'Impressive' },
-    { emoji: '\u{1F4A1}', label: 'Inspiring' },
-    { emoji: '\u2764\uFE0F', label: 'Love it' },
-  ];
-
-  useEffect(() => {
-    const saved = localStorage.getItem('asfi_appreciate');
-    if (saved) {
-      const data = JSON.parse(saved);
-      setLiked(!!data.liked);
-      setReaction(data.reaction || null);
-      if (data.liked || data.reaction) setShowThanks(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchCount = async () => {
-      const { data } = await supabase.from('appreciations').select('count').eq('id', 1).single();
-
-      if (data) {
-        setCount(data.count);
-      }
-      setLoading(false);
-    };
-
-    fetchCount();
-
-    const channel = supabase
-      .channel('appreciations-realtime')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'appreciations',
-          filter: 'id=eq.1',
-        },
-        (payload) => {
-          setCount(payload.new.count);
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const incrementInDatabase = async () => {
-    const { data } = await supabase.from('appreciations').update({ count: count + 1 }).eq('id', 1).select().single();
-
-    if (data) {
-      setCount(data.count);
-    }
-  };
-
-  const handleLike = async () => {
-    if (liked) return;
-
-    await incrementInDatabase();
-    setLiked(true);
-    setShowThanks(true);
-
-    localStorage.setItem('asfi_appreciate', JSON.stringify({ liked: true, reaction }));
-    toast.success('Thank you! It really means a lot.', { duration: 3000 });
-  };
-
-  const handleReaction = async (emoji: string) => {
-    setReaction(emoji);
-    setShowThanks(true);
-
-    if (!liked) {
-      await incrementInDatabase();
-      setLiked(true);
-      localStorage.setItem('asfi_appreciate', JSON.stringify({ liked: true, reaction: emoji }));
-    } else {
-      localStorage.setItem('asfi_appreciate', JSON.stringify({ liked, reaction: emoji }));
-    }
-
-    toast.success(`Thanks for the ${emoji}!`, { duration: 2000 });
-  };
-
-  return (
-    <section className="section px-6 py-24">
-      <div className="mx-auto max-w-5xl">
-        <div className="appreciate-panel">
-          <div className="relative z-10 grid gap-10 md:grid-cols-[1.05fr_0.95fr] md:items-center">
-            <div>
-              <div className="mb-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-[#7dd3fc]">
-                <Heart size={16} />
-                Appreciate
-              </div>
-              <h2 className="text-4xl text-white sm:text-5xl">Enjoyed the portfolio?</h2>
-              <p className="mt-4 max-w-xl text-base leading-7 text-[#a1a1aa]">
-                A tiny signal helps me know this work is landing with the people who visit it.
-              </p>
-            </div>
-
-            <div className="flex flex-col items-center rounded-[24px] border border-white/10 bg-black/20 p-6 text-center backdrop-blur">
-              <motion.button
-                type="button"
-                onClick={handleLike}
-                whileTap={{ scale: 0.92 }}
-                className={`heart-button ${liked ? 'heart-button-liked' : ''}`}
-                disabled={liked || loading}
-                aria-label="Appreciate this portfolio"
-              >
-                <motion.span animate={{ scale: liked ? [1, 1.22, 1] : 1 }} transition={{ duration: 0.45 }}>
-                  <Heart size={44} className={liked ? 'fill-[#fb7185] text-[#fb7185]' : 'text-white'} />
-                </motion.span>
-              </motion.button>
-
-              <div className="mt-5 min-h-[30px] text-sm text-[#a1a1aa]">
-                {loading ? (
-                  'Loading appreciation count...'
-                ) : count === 0 ? (
-                  'Be the first to appreciate this portfolio'
-                ) : (
-                  <>
-                    <span className="font-mono text-2xl font-semibold text-white">{count}</span>
-                    <span className="ml-2 text-[#a1a1aa]">people appreciated this portfolio</span>
-                  </>
-                )}
-              </div>
-
-              <div className="mt-6 flex flex-wrap justify-center gap-2">
-                {reactions.map((item) => (
-                  <button
-                    key={item.label}
-                    type="button"
-                    onClick={() => handleReaction(item.emoji)}
-                    disabled={reaction === item.emoji}
-                    className={`reaction-chip ${reaction === item.emoji ? 'reaction-chip-active' : ''}`}
-                  >
-                    <span>{item.emoji}</span>
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-
-              {showThanks && (
-                <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6 text-sm text-[#d4d4d8]">
-                  Thank you. Feel free to reach out if you want to collaborate.
-                </motion.p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
+/* AppreciateSection removed — appreciation is now via the header HeartButton */
 
 const PortfolioLoadingScreen: FC = () => (
   <main
@@ -951,7 +862,7 @@ const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
 
         <CertificatesSection certificates={certificates} />
 
-        <AppreciateSection />
+
 
         {hasContact && (
           <section id="contact" className="section section-band px-6 py-24">

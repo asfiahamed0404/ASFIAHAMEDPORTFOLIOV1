@@ -272,6 +272,82 @@ export async function deleteSocials(id: string): Promise<void> {
   if (error) throw error
 }
 
+// Appreciation functions
+export async function submitAppreciation(visitorId: string): Promise<void> {
+  const { error } = await supabase
+    .from('appreciation_logs')
+    .insert({ visitor_id: visitorId })
+  // Ignore unique constraint violation — visitor already appreciated
+  if (error && error.code !== '23505') throw error
+}
+
+export async function removeAppreciation(visitorId: string): Promise<void> {
+  const { error } = await supabase
+    .from('appreciation_logs')
+    .delete()
+    .eq('visitor_id', visitorId)
+  if (error) throw error
+}
+
+export interface AppreciationStats {
+  total: number
+  today: number
+  thisWeek: number
+  thisMonth: number
+  dailyCounts: { date: string; count: number }[]
+}
+
+export async function getAppreciationStats(): Promise<AppreciationStats> {
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
+
+  const dayOfWeek = now.getDay()
+  const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek)
+  const weekStartStr = weekStart.toISOString()
+
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+
+  const thirtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29).toISOString()
+
+  // Fetch all logs from the last 30 days in a single query (admin only via RLS)
+  const { data: allLogs, error: allError } = await supabase
+    .from('appreciation_logs')
+    .select('created_at')
+
+  if (allError) throw allError
+
+  const logs = allLogs || []
+  const total = logs.length
+
+  const today = logs.filter(l => l.created_at >= todayStart).length
+  const thisWeek = logs.filter(l => l.created_at >= weekStartStr).length
+  const thisMonth = logs.filter(l => l.created_at >= monthStart).length
+
+  // Build daily counts for the last 30 days
+  const recentLogs = logs.filter(l => l.created_at >= thirtyDaysAgo)
+  const countMap: Record<string, number> = {}
+
+  // Initialize all 30 days with 0
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i)
+    const key = d.toISOString().split('T')[0]
+    countMap[key] = 0
+  }
+
+  recentLogs.forEach(log => {
+    const key = log.created_at.split('T')[0]
+    if (countMap[key] !== undefined) {
+      countMap[key]++
+    }
+  })
+
+  const dailyCounts = Object.entries(countMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, count]) => ({ date, count }))
+
+  return { total, today, thisWeek, thisMonth, dailyCounts }
+}
+
 // Auth helpers
 export async function signIn(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })

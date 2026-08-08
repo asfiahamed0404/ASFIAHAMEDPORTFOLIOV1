@@ -1,109 +1,141 @@
-import { useState } from 'react';
-import type { FC } from 'react';
-import { Award, Maximize2, X } from 'lucide-react';
-import type { Certificate } from '../../lib/supabase';
-import SectionHeading from '../SectionHeading';
+import { useEffect, useRef, useState, type FC } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { Award, Maximize2, X } from 'lucide-react'
+import type { Certificate } from '../../lib/supabase'
+import SectionHeading from '../SectionHeading'
 
 interface CertificatesSectionProps {
-  certificates: Certificate[];
+  certificates: Certificate[]
 }
 
 const CertificatesSection: FC<CertificatesSectionProps> = ({ certificates }) => {
-  const [selectedCertificateImageUrl, setSelectedCertificateImageUrl] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const openerRef = useRef<HTMLButtonElement | null>(null)
+  const shouldReduceMotion = Boolean(useReducedMotion())
 
-  if (certificates.length === 0) return null;
+  useEffect(() => {
+    if (!selectedCertificate) return
 
-  const openImage = (url: string) => {
-    setSelectedCertificateImageUrl(url);
-    setIsModalOpen(true);
-  };
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    closeButtonRef.current?.focus()
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSelectedCertificate(null)
+      if (event.key === 'Tab') {
+        event.preventDefault()
+        closeButtonRef.current?.focus()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', handleKeyDown)
+      openerRef.current?.focus()
+    }
+  }, [selectedCertificate])
+
+  if (certificates.length === 0) return null
+
+  const openCertificate = (certificate: Certificate, button: HTMLButtonElement) => {
+    openerRef.current = button
+    setSelectedCertificate(certificate)
+  }
 
   return (
-    <section id="certificates" className="relative px-6 py-24">
-      <div className="absolute inset-x-0 top-0 -z-10 h-px section-divider" />
-      <div className="max-w-6xl mx-auto">
+    <motion.section
+      id="certificates"
+      className="pp-section pp-section-muted"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px', amount: 0.12 }}
+      transition={shouldReduceMotion ? { duration: 0 } : {
+        duration: 0.52,
+        ease: [0.23, 1, 0.32, 1],
+      }}
+    >
+      <div className="pp-container">
         <SectionHeading
-          eyebrow="Certifications"
-          title="Credentials & courses."
-          subtitle="Verified completions from Kaggle, NVIDIA, AWS, and others."
+          eyebrow="Certificates"
+          title="Credentials and continued learning"
+          subtitle="Selected certifications and course completions. Open any certificate to view it in detail."
           icon={Award}
         />
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {certificates.map((cert) => {
-            const hasImage = !!cert.image_url;
-            return (
-              <div
-                key={cert.id}
-                role={hasImage ? 'button' : undefined}
-                tabIndex={hasImage ? 0 : -1}
-                onClick={hasImage ? () => openImage(cert.image_url!) : undefined}
-                onKeyDown={
-                  hasImage
-                    ? (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          openImage(cert.image_url!);
-                        }
-                      }
-                    : undefined
-                }
-                className="cert-card group relative flex flex-col overflow-hidden rounded-2xl card-hover-lift card-glow-top card-shine"
-              >
-                <div className="cert-card-media">
+        <div className="pp-certificates-grid">
+          {certificates.map((certificate) => {
+            const hasImage = Boolean(certificate.image_url)
+            const content = (
+              <>
+                <div className="pp-certificate-media">
                   {hasImage ? (
-                    <img
-                      src={cert.image_url!}
-                      alt={cert.name}
-                      loading="lazy"
-                      className="cert-card-image"
-                    />
+                    <img src={certificate.image_url!} alt="" loading="lazy" />
                   ) : (
-                    <div className="cert-card-fallback">
-                      <Award size={28} className="text-[#a5b4fc]" />
-                    </div>
+                    <span className="pp-certificate-placeholder"><Award size={28} aria-hidden="true" /></span>
                   )}
-                  {hasImage && (
-                    <div className="cert-card-zoom">
-                      <Maximize2 size={14} className="text-white" />
-                    </div>
-                  )}
+                  {hasImage && <Maximize2 size={15} className="pp-certificate-expand" aria-hidden="true" />}
                 </div>
-                <div className="cert-card-body">
-                  <h3 className="cert-card-title">{cert.name}</h3>
-                  <span className="cert-card-issuer">{cert.issuer}</span>
+                <div className="pp-certificate-copy">
+                  <h3>{certificate.name}</h3>
+                  <p>{certificate.issuer}</p>
                 </div>
-              </div>
-            );
+              </>
+            )
+
+            return hasImage ? (
+              <button
+                key={certificate.id}
+                type="button"
+                className="pp-certificate-card"
+                onClick={(event) => openCertificate(certificate, event.currentTarget)}
+                aria-label={`View certificate: ${certificate.name}`}
+              >
+                {content}
+              </button>
+            ) : (
+              <article key={certificate.id} className="pp-certificate-card pp-certificate-static">
+                {content}
+              </article>
+            )
           })}
         </div>
       </div>
-      {isModalOpen && selectedCertificateImageUrl && (
+
+      {selectedCertificate?.image_url && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
-          onClick={() => setIsModalOpen(false)}
+          className="pp-certificate-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="certificate-dialog-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSelectedCertificate(null)
+          }}
         >
-          <div
-            className="relative bg-[#0d0d10] border border-[#27272a] rounded-3xl p-6 w-full max-w-3xl card-glow-top"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-[#27272a] hover:bg-[#3f3f46] text-white transition-colors z-10"
-              aria-label="Close"
-            >
-              <X size={16} />
-            </button>
-            <img
-              src={selectedCertificateImageUrl}
-              alt="Certificate"
-              className="max-w-full max-h-[80vh] object-contain rounded-xl border border-[#27272a] mt-2 mx-auto"
-            />
+          <div className="pp-certificate-dialog">
+            <div className="pp-certificate-dialog-header">
+              <div>
+                <h2 id="certificate-dialog-title">{selectedCertificate.name}</h2>
+                <p>{selectedCertificate.issuer}</p>
+              </div>
+              <button
+                ref={closeButtonRef}
+                type="button"
+                onClick={() => setSelectedCertificate(null)}
+                className="pp-modal-close"
+                aria-label="Close certificate preview"
+              >
+                <X size={19} aria-hidden="true" />
+              </button>
+            </div>
+            <div className="pp-certificate-dialog-media">
+              <img src={selectedCertificate.image_url} alt={`${selectedCertificate.name} certificate`} />
+            </div>
           </div>
         </div>
       )}
-    </section>
-  );
-};
+    </motion.section>
+  )
+}
 
-export default CertificatesSection;
+export default CertificatesSection

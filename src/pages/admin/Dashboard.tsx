@@ -1,278 +1,321 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
-  getProjects,
-  getSkills,
-  getEducation,
-  getExperience,
-  getCertificates,
-  getSocials,
-  getAppreciationStats,
-} from '../../lib/supabase'
-import type { AppreciationStats } from '../../lib/supabase'
-import {
-  Briefcase,
-  Code2,
-  GraduationCap,
-  Award,
-  FileText,
-  Link2,
-  Heart,
-  CalendarDays,
-  CalendarRange,
-  CalendarCheck,
-  TrendingUp,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
-import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts'
+import {
+  Award,
+  Briefcase,
+  CalendarCheck,
+  CalendarDays,
+  CalendarRange,
+  Code2,
+  ExternalLink,
+  FileText,
+  GraduationCap,
+  Heart,
+  Link2,
+  RefreshCw,
+  TrendingUp,
+  type LucideIcon,
+} from 'lucide-react'
+import AdminPageHeader from '../../components/admin/AdminPageHeader'
+import {
+  getAppreciationStats,
+  getCertificates,
+  getEducation,
+  getExperience,
+  getProjects,
+  getSkills,
+  getSocials,
+  type AppreciationStats,
+} from '../../lib/supabase'
 
-interface StatCardProps {
+interface ContentStat {
   title: string
   getFn: () => Promise<unknown[]>
   icon: LucideIcon
+  to: string
 }
+
+const contentStats: ContentStat[] = [
+  { title: 'Projects', getFn: getProjects, icon: Briefcase, to: '/admin/projects' },
+  { title: 'Skills', getFn: getSkills, icon: Code2, to: '/admin/skills' },
+  { title: 'Education', getFn: getEducation, icon: GraduationCap, to: '/admin/education' },
+  { title: 'Experience', getFn: getExperience, icon: FileText, to: '/admin/experience' },
+  { title: 'Certificates', getFn: getCertificates, icon: Award, to: '/admin/certificates' },
+  { title: 'Social Links', getFn: getSocials, icon: Link2, to: '/admin/socials' },
+]
+
+const appreciationMetrics = [
+  { key: 'today', label: 'Today', icon: CalendarDays },
+  { key: 'thisWeek', label: 'This week', icon: CalendarRange },
+  { key: 'thisMonth', label: 'This month', icon: CalendarCheck },
+  { key: 'total', label: 'All time', icon: Heart },
+] as const
 
 export default function AdminDashboard() {
   const [appreciationStats, setAppreciationStats] = useState<AppreciationStats | null>(null)
   const [appreciationLoading, setAppreciationLoading] = useState(true)
   const [appreciationError, setAppreciationError] = useState<string | null>(null)
+  const prefersReducedMotion = usePrefersReducedMotion()
+
+  const handleAppreciationRetry = async () => {
+    setAppreciationLoading(true)
+    setAppreciationError(null)
+
+    try {
+      const stats = await getAppreciationStats()
+      setAppreciationStats(stats)
+    } catch (error) {
+      setAppreciationStats(null)
+      setAppreciationError(
+        error instanceof Error ? error.message : 'Failed to load appreciation stats',
+      )
+    } finally {
+      setAppreciationLoading(false)
+    }
+  }
 
   useEffect(() => {
+    let mounted = true
+
     getAppreciationStats()
       .then((stats) => {
-        setAppreciationStats(stats)
+        if (mounted) setAppreciationStats(stats)
       })
-      .catch((err) => {
-        setAppreciationError(err?.message || 'Failed to load appreciation stats')
+      .catch((error) => {
+        if (!mounted) return
+        setAppreciationError(
+          error instanceof Error ? error.message : 'Failed to load appreciation stats',
+        )
       })
-      .finally(() => setAppreciationLoading(false))
+      .finally(() => {
+        if (mounted) setAppreciationLoading(false)
+      })
+
+    return () => {
+      mounted = false
+    }
   }, [])
 
   return (
-    <div className="admin-page">
-      <div className="admin-page-header">
-        <div>
-          <p className="admin-kicker">Portfolio CMS</p>
-          <h1 className="admin-page-title">Dashboard</h1>
-        </div>
-      </div>
+    <div className="admin-page admin-dashboard">
+      <AdminPageHeader
+        eyebrow="Portfolio CMS"
+        title="Dashboard"
+        actions={(
+          <Link to="/" className="admin-secondary-action">
+            <ExternalLink size={16} aria-hidden="true" />
+            <span>View site</span>
+          </Link>
+        )}
+      />
 
-      <div className="admin-stat-grid">
-        <AdminStatCard title="Projects" getFn={getProjects} icon={Briefcase} />
-        <AdminStatCard title="Skills" getFn={getSkills} icon={Code2} />
-        <AdminStatCard title="Education" getFn={getEducation} icon={GraduationCap} />
-        <AdminStatCard title="Certificates" getFn={getCertificates} icon={Award} />
-        <AdminStatCard title="Experience" getFn={getExperience} icon={FileText} />
-        <AdminStatCard title="Social Links" getFn={getSocials} icon={Link2} />
-      </div>
+      <section className="admin-dashboard-counts" aria-label="Content overview">
+        {contentStats.map((stat) => (
+          <ContentStatCard key={stat.title} {...stat} />
+        ))}
+      </section>
 
-      {/* Appreciation Stats Section */}
-      <div className="mt-10">
-        <div className="mb-5 flex items-center gap-3">
-          <span className="section-eyebrow-bar" />
-          <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.22em] text-[#7dd3fc]">
-            <Heart size={15} />
+      <section
+        className="admin-dashboard-section"
+        aria-labelledby="admin-appreciation-title"
+        aria-busy={appreciationLoading}
+      >
+        <div className="admin-dashboard-section-heading">
+          <h2 id="admin-appreciation-title" className="admin-dashboard-section-title">
+            <Heart size={16} aria-hidden="true" />
             Appreciations
-          </span>
+          </h2>
+          <span className="admin-chart-subtitle">Live portfolio engagement</span>
         </div>
 
         {appreciationLoading && (
-          <div className="admin-stat-card flex items-center justify-center" style={{ minHeight: 120 }}>
-            <p className="text-sm text-[#a1a1aa]">Loading appreciation stats…</p>
+          <div className="admin-dashboard-message" role="status">
+            Loading appreciation statistics…
           </div>
         )}
 
-        {appreciationError && (
-          <div className="admin-stat-card flex items-center justify-center" style={{ minHeight: 120 }}>
-            <p className="text-sm text-[#fb7185]">{appreciationError}</p>
+        {appreciationError && !appreciationLoading && (
+          <div
+            className="admin-dashboard-message admin-dashboard-message-error"
+            role="alert"
+            title={appreciationError}
+          >
+            <span>Appreciation statistics are unavailable.</span>
+            <button
+              type="button"
+              className="admin-secondary-action"
+              onClick={() => void handleAppreciationRetry()}
+            >
+              <RefreshCw size={14} aria-hidden="true" />
+              Retry
+            </button>
           </div>
         )}
 
-        {appreciationStats && !appreciationLoading && (
-          <>
-            <div className="admin-stat-grid">
-              <AppreciationStatCard
-                title="Total"
-                value={appreciationStats.total}
-                icon={Heart}
-                accent="rose"
-              />
-              <AppreciationStatCard
-                title="Today"
-                value={appreciationStats.today}
-                icon={CalendarDays}
-                accent="cyan"
-              />
-              <AppreciationStatCard
-                title="This Week"
-                value={appreciationStats.thisWeek}
-                icon={CalendarRange}
-                accent="indigo"
-              />
-              <AppreciationStatCard
-                title="This Month"
-                value={appreciationStats.thisMonth}
-                icon={CalendarCheck}
-                accent="purple"
-              />
-            </div>
+        {appreciationStats && !appreciationLoading && !appreciationError && (
+          <div className="admin-dashboard-analytics">
+            <dl className="admin-appreciation-grid" aria-label="Appreciation totals">
+              {appreciationMetrics.map(({ key, label, icon: Icon }) => (
+                <div key={key} className="admin-appreciation-card">
+                  <dt className="admin-appreciation-card-label">
+                    <Icon size={14} aria-hidden="true" />
+                    {label}
+                  </dt>
+                  <dd className="admin-appreciation-card-value">{appreciationStats[key]}</dd>
+                </div>
+              ))}
+            </dl>
 
-            {/* Activity Chart */}
-            <div className="admin-content-panel mt-6">
-              <div className="mb-5 flex items-center gap-2">
-                <TrendingUp size={16} className="text-[#7dd3fc]" />
-                <h3 className="text-sm font-medium text-white">Last 30 Days Activity</h3>
+            <article className="admin-chart-panel" aria-labelledby="admin-chart-title">
+              <div className="admin-chart-header">
+                <div>
+                  <h3 id="admin-chart-title" className="admin-chart-title">
+                    30-day activity
+                  </h3>
+                  <p className="admin-chart-subtitle">Daily appreciation totals</p>
+                </div>
+                <span className="admin-dashboard-section-title" aria-hidden="true">
+                  <TrendingUp size={15} />
+                </span>
               </div>
-              <div style={{ width: '100%', height: 220 }}>
+
+              <div className="admin-chart">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={appreciationStats.dailyCounts}>
+                  <AreaChart
+                    data={appreciationStats.dailyCounts}
+                    margin={{ top: 8, right: 8, left: -8, bottom: 0 }}
+                    accessibilityLayer
+                  >
                     <defs>
-                      <linearGradient id="appreciationGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#fb7185" stopOpacity={0.35} />
-                        <stop offset="95%" stopColor="#fb7185" stopOpacity={0} />
+                      <linearGradient id="adminAppreciationGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.28} />
+                        <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="rgba(255,255,255,0.06)"
+                      stroke="rgba(255,255,255,0.07)"
                       vertical={false}
                     />
                     <XAxis
                       dataKey="date"
-                      tick={{ fill: '#71717a', fontSize: 10 }}
+                      tick={{ fill: '#8b93a1', fontSize: 10 }}
                       tickLine={false}
                       axisLine={false}
-                      tickFormatter={(v: string) => {
-                        const d = new Date(v)
-                        return `${d.getDate()}/${d.getMonth() + 1}`
-                      }}
+                      tickFormatter={formatShortDate}
                       interval="preserveStartEnd"
-                      minTickGap={36}
+                      minTickGap={38}
                     />
                     <YAxis
-                      tick={{ fill: '#71717a', fontSize: 10 }}
+                      tick={{ fill: '#8b93a1', fontSize: 10 }}
                       tickLine={false}
                       axisLine={false}
                       allowDecimals={false}
-                      width={28}
+                      width={30}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: '#111113',
+                        background: '#14171c',
                         border: '1px solid rgba(255,255,255,0.12)',
-                        borderRadius: '12px',
+                        borderRadius: '10px',
+                        boxShadow: '0 12px 30px rgba(0,0,0,0.35)',
                         color: '#fff',
                         fontSize: 12,
                       }}
-                      labelFormatter={(label) => {
-                        const d = new Date(String(label))
-                        return d.toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })
-                      }}
+                      cursor={{ stroke: 'rgba(34,211,238,0.32)', strokeWidth: 1 }}
+                      labelFormatter={(label) => formatLongDate(String(label))}
                       formatter={(value) => [String(value), 'Appreciations']}
                     />
                     <Area
                       type="monotone"
                       dataKey="count"
-                      stroke="#fb7185"
+                      stroke="#22d3ee"
                       strokeWidth={2}
-                      fill="url(#appreciationGradient)"
+                      fill="url(#adminAppreciationGradient)"
+                      isAnimationActive={!prefersReducedMotion}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </div>
-          </>
+            </article>
+          </div>
         )}
-      </div>
+      </section>
     </div>
   )
 }
 
-function AdminStatCard({ title, getFn, icon: Icon }: StatCardProps) {
-  const [count, setCount] = useState(0)
+function ContentStatCard({ title, getFn, icon: Icon, to }: ContentStat) {
+  const [count, setCount] = useState<number | null>(null)
+  const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
+    let mounted = true
+
     getFn()
-      .then((data) => setCount(Array.isArray(data) ? data.length : 0))
-      .catch(() => setCount(0))
+      .then((data) => {
+        if (!mounted) return
+        setCount(Array.isArray(data) ? data.length : 0)
+      })
+      .catch(() => {
+        if (mounted) setHasError(true)
+      })
+
+    return () => {
+      mounted = false
+    }
   }, [getFn])
 
+  const accessibleValue = hasError ? 'Unavailable' : count === null ? 'Loading' : count
+
   return (
-    <div className="admin-stat-card">
-      <div className="flex items-center gap-3">
-        <div className="admin-stat-icon">
-          <Icon size={24} />
-        </div>
-        <div className="text-sm text-[#a1a1aa]">{title}</div>
-      </div>
-      <div className="text-3xl font-bold text-white">{count}</div>
-    </div>
+    <Link className="admin-stat-card" to={to} aria-label={`${title}: ${accessibleValue}`}>
+      <span className="admin-stat-card-top">
+        <span className="admin-stat-icon" aria-hidden="true">
+          <Icon size={16} />
+        </span>
+        <span className="admin-stat-label">{title}</span>
+      </span>
+      <span className="admin-stat-value" aria-live="polite">
+        {count ?? '—'}
+      </span>
+    </Link>
   )
 }
 
-const accentColors: Record<string, { border: string; bg: string; text: string }> = {
-  rose: {
-    border: 'rgba(251,113,133,0.25)',
-    bg: 'rgba(251,113,133,0.08)',
-    text: '#fb7185',
-  },
-  cyan: {
-    border: 'rgba(34,211,238,0.25)',
-    bg: 'rgba(34,211,238,0.08)',
-    text: '#22d3ee',
-  },
-  indigo: {
-    border: 'rgba(129,140,248,0.25)',
-    bg: 'rgba(129,140,248,0.08)',
-    text: '#818cf8',
-  },
-  purple: {
-    border: 'rgba(168,85,247,0.25)',
-    bg: 'rgba(168,85,247,0.08)',
-    text: '#a855f7',
-  },
+function formatShortDate(value: string) {
+  const date = new Date(`${value}T00:00:00`)
+  return `${date.getDate()}/${date.getMonth() + 1}`
 }
 
-function AppreciationStatCard({
-  title,
-  value,
-  icon: Icon,
-  accent,
-}: {
-  title: string
-  value: number
-  icon: LucideIcon
-  accent: string
-}) {
-  const colors = accentColors[accent] || accentColors.rose
+function formatLongDate(value: string) {
+  const date = new Date(`${value}T00:00:00`)
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
 
-  return (
-    <div className="admin-stat-card">
-      <div className="flex items-center gap-3">
-        <div
-          className="admin-stat-icon"
-          style={{
-            borderColor: colors.border,
-            background: colors.bg,
-            color: colors.text,
-          }}
-        >
-          <Icon size={24} />
-        </div>
-        <div className="text-sm text-[#a1a1aa]">{title}</div>
-      </div>
-      <div className="text-3xl font-bold text-white">{value}</div>
-    </div>
-  )
+function usePrefersReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches)
+    updatePreference()
+    mediaQuery.addEventListener('change', updatePreference)
+    return () => mediaQuery.removeEventListener('change', updatePreference)
+  }, [])
+
+  return prefersReducedMotion
 }

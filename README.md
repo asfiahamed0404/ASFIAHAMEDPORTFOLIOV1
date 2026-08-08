@@ -1,82 +1,59 @@
-# Asfi Ahamed | Portfolio
+# Asfi Ahamed — Personal Portfolio
 
-A modern, responsive personal portfolio website built with React + Vite + TypeScript.
+The official source repository for Asfi Ahamed's personal portfolio and content management system.
 
-**Live Demo:** Coming soon (will be added after deployment)
+The website presents professional experience, education, technical skills, certifications, and selected work through a responsive public interface. It also includes a protected administration area for managing portfolio content.
 
-## About
+## Technology
 
-I'm Asfi Ahamed, a Computer Science & Engineering student at the University of Moratuwa, Sri Lanka, specializing in **Data Science & Engineering (DSE)**.
+- React 19 and TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Supabase authentication, database, and storage
 
-With a strong academic foundation (G.C.E. A/L Island Rank 424, Z-Score +2.3250) and 9 A’s in O/L, I have a deep passion for building intelligent systems, AI-powered applications, and clean full-stack solutions.
+## Application Areas
 
-## Features
+- Responsive public portfolio
+- Accessible project and certificate presentation
+- Contact and appreciation interactions
+- Protected portfolio administration
+- Supabase-backed content management
 
-- Clean, modern, and fully responsive design
-- Smooth animations using Framer Motion
-- Real-time "Appreciate" counter powered by Supabase
-- Email notifications on new appreciations (via Supabase Edge Functions + Resend)
-- Project showcase with detailed descriptions
-- Professional and minimal UI
+## Local Development
 
-## Tech Stack
-
-- **Frontend:** React 19, TypeScript, Vite
-- **Styling:** Tailwind CSS
-- **Animations:** Framer Motion
-- **Backend & Database:** Supabase (PostgreSQL + Realtime)
-- **Email:** Resend (via Supabase Edge Functions)
-- **Deployment:** Vercel (planned)
-
-## Projects Included
-
-- **Q&A Chat Bot** – RAG-based PDF question answering using LangChain + HuggingFace
-- **End-to-End Data Science Project** – Full ML lifecycle project
-- **React Movie App** – Full-stack movie browsing application
-- **Healthcare-MediBridge** – Ballerina backend for healthcare APIs
-- **Nano-processor** – Digital logic and microprocessor architecture project
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v18 or higher recommended)
-- npm or yarn
-
-### Installation
+Install dependencies and start the development server:
 
 ```bash
-# Clone the repository
-git clone https://github.com/asfiahamed0404/asfi-portfolio.git
-
-# Navigate into the project
-cd asfi-portfolio
-
-# Install dependencies
 npm install
-
-# Start the development server
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`
-
-### Build for Production
+Create a production build:
 
 ```bash
 npm run build
 ```
 
+The application requires the following environment variables:
+
+```text
+VITE_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY
+```
+
+Environment values and other credentials must never be committed to source control.
+
+## Ownership and Use
+
+This is a personal portfolio, not an open-source template or starter project.
+
+Copyright © Asfi Ahamed. All rights reserved. No permission is granted to copy, modify, redistribute, publish, deploy, or reuse the source code, visual design, written content, personal information, or branding without prior written authorization.
+
+Please do not fork or reproduce this repository for personal or commercial use. GitHub may technically provide repository-forking functionality, but creating a fork does not grant permission to reuse or redistribute this work.
+
 ## Contact
 
-- **GitHub:** [asfiahamed0404](https://github.com/asfiahamed0404)
-- **LinkedIn:** [Asfi Ahamed](https://www.linkedin.com/in/asfi-ahamed-baa362347)
-- **Email:** muasfiahamed276@gmail.com
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-Built with ❤️ by Asfi Ahamed
+- [GitHub](https://github.com/asfiahamed0404)
+- [LinkedIn](https://www.linkedin.com/in/asfi-ahamed-baa362347)
+- [Email](mailto:muasfiahamed276@gmail.com)

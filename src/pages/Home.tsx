@@ -558,13 +558,26 @@ const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
         {hasHero && (
           <section className="pp-hero" aria-labelledby="portfolio-title">
             <div className="pp-container pp-hero-grid">
-              <div className="pp-hero-copy">
+              <div className="pp-hero-heading">
                 {isNotEmpty(siteContent?.hero_status) && (
                   <p className="pp-hero-status"><span aria-hidden="true" />{siteContent?.hero_status}</p>
                 )}
                 {isNotEmpty(siteContent?.hero_title) && (
                   <h1 id="portfolio-title">{siteContent?.hero_title}</h1>
                 )}
+              </div>
+
+              <div className="pp-portrait">
+                <div className="pp-portrait-visual">
+                  <div className="pp-portrait-accent" aria-hidden="true" />
+                  <div className="pp-portrait-frame">
+                    <img src={asfiPortrait} alt="Asfi Ahamed" />
+                  </div>
+                </div>
+                <p>Software engineering · AI and data systems</p>
+              </div>
+
+              <div className="pp-hero-details">
                 {isNotEmpty(siteContent?.hero_subtitle) && (
                   <div
                     className="pp-hero-subtitle"
@@ -603,6 +616,7 @@ const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={social.label}
+                        data-social={social.label.toLowerCase()}
                       >
                         <SocialIcon label={social.label} />
                         <span>{social.label}</span>
@@ -610,16 +624,6 @@ const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
                     ))}
                   </div>
                 )}
-              </div>
-
-              <div className="pp-portrait">
-                <div className="pp-portrait-visual">
-                  <div className="pp-portrait-accent" aria-hidden="true" />
-                  <div className="pp-portrait-frame">
-                    <img src={asfiPortrait} alt="Asfi Ahamed" />
-                  </div>
-                </div>
-                <p>Software engineering · AI and data systems</p>
               </div>
             </div>
           </section>

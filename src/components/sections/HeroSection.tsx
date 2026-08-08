@@ -1,0 +1,72 @@
+import { motion } from 'framer-motion';
+import type { FC } from 'react';
+
+interface HeroSectionProps {
+  heroTitle?: string | null;
+  heroSubtitle?: string | null;
+  heroStatus?: string | null;
+  portraitUrl?: string | null;
+  fallbackPortrait: string;
+}
+
+const HeroSection: FC<HeroSectionProps> = ({
+  heroTitle,
+  heroSubtitle,
+  heroStatus,
+  portraitUrl,
+  fallbackPortrait,
+}) => {
+  // Fallback text values if content is missing
+  const title = heroTitle ?? "Hi, I'm Asfi Ahamed";
+  const subtitle = heroSubtitle ?? 'Computer Science & Engineering Student';
+  const status = heroStatus ?? '';
+
+  return (
+    <section className="pt-28 pb-20 px-6 max-w-6xl mx-auto relative">
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.15),transparent_60%)] pointer-events-none" />
+      <div className="pt-12 pb-8 flex flex-col-reverse md:grid md:grid-cols-2 gap-12 items-center">
+        {/* Left side – text */}
+        <div className="hero-text-content">
+          {/* 3rd Year Badge - Always at the top */}
+          <div className="third-year-badge inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#6366f1]/10 border border-[#6366f1]/30 text-[#818cf8] text-sm font-medium mb-6">
+            <span className="blink-dot" />
+            3rd Year
+          </div>
+
+          {status && (
+            <div className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-[#111113] border border-[#27272a] text-sm mb-8">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              {status}
+            </div>
+          )}
+          <h1 className="text-white tracking-[-3.5px] leading-[0.92] mb-6">{title}</h1>
+          {subtitle && (
+            <p className="max-w-xl text-2xl md:text-[28px] font-light tracking-[-0.6px] text-[#f4f4f5] mb-10">
+              <span dangerouslySetInnerHTML={{ __html: subtitle }} />
+            </p>
+          )}
+        </div>
+
+        {/* Right side – portrait */}
+        <div className="relative flex justify-center md:justify-end mt-8 md:mt-0 hero-portrait">
+          <div className="relative">
+            <div className="absolute -inset-4 bg-gradient-to-br from-[#6366f1]/20 to-transparent rounded-[3rem] blur-2xl" />
+            <motion.img
+              src={portraitUrl || fallbackPortrait}
+              alt="Asfi Ahamed"
+              className="relative w-[260px] h-[260px] md:w-[320px] md:h-[320px] object-cover object-[50%_30%] rounded-[2.5rem] border border-[#27272a] shadow-2xl transition-all duration-500 hero-portrait-img"
+              loading="lazy"
+              width={320}
+              height={320}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;

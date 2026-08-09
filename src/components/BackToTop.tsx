@@ -1,81 +1,78 @@
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowUp } from 'lucide-react'
+
+const RADIUS = 20
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
 export default function BackToTop() {
   const [progress, setProgress] = useState(0)
   const [visible, setVisible] = useState(false)
+  const shouldReduceMotion = Boolean(useReducedMotion())
 
   useEffect(() => {
-    const onScroll = () => {
+    let animationFrame: number | null = null
+
+    const updateProgress = () => {
+      animationFrame = null
       const scrollTop = window.scrollY
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight
-      const pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0
-      setProgress(pct)
-      setVisible(scrollTop > 300)
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+      const nextProgress = scrollableHeight > 0
+        ? Math.min(100, Math.max(0, (scrollTop / scrollableHeight) * 100))
+        : 0
+
+      setProgress((current) => Math.abs(current - nextProgress) < 0.1 ? current : nextProgress)
+      setVisible((current) => {
+        const nextVisible = scrollTop > 300
+        return current === nextVisible ? current : nextVisible
+      })
     }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
+
+    const requestUpdate = () => {
+      if (animationFrame === null) animationFrame = window.requestAnimationFrame(updateProgress)
+    }
+
+    updateProgress()
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+
     return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', requestUpdate)
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame)
     }
   }, [])
 
-  const radius = 22
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (progress / 100) * circumference
+  const offset = CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={false}>
       {visible && (
         <motion.button
-          initial={{ opacity: 0, scale: 0.6, y: 20 }}
+          type="button"
+          initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.82, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.6, y: 20 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.82, y: 10 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2 }}
+          onClick={() => window.scrollTo({
+            top: 0,
+            behavior: shouldReduceMotion ? 'auto' : 'smooth',
+          })}
           aria-label="Back to top"
-          className="fixed bottom-6 right-6 z-50 group flex items-center justify-center w-14 h-14 rounded-full bg-[#111113]/80 backdrop-blur-md border border-[#27272a] shadow-xl hover:border-[#6366f1]/60 transition-colors"
+          className="pp-back-to-top"
         >
-          <svg
-            className="absolute inset-0 -rotate-90"
-            width="56"
-            height="56"
-            viewBox="0 0 56 56"
-          >
+          <svg className="pp-back-to-top-progress" viewBox="0 0 48 48" aria-hidden="true">
+            <circle className="pp-back-to-top-track" cx="24" cy="24" r={RADIUS} />
             <circle
-              cx="28"
-              cy="28"
-              r={radius}
-              stroke="#27272a"
-              strokeWidth="3"
-              fill="none"
-            />
-            <circle
-              cx="28"
-              cy="28"
-              r={radius}
-              stroke="url(#btt-gradient)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              fill="none"
-              strokeDasharray={circumference}
+              className="pp-back-to-top-value"
+              cx="24"
+              cy="24"
+              r={RADIUS}
+              strokeDasharray={CIRCUMFERENCE}
               strokeDashoffset={offset}
-              style={{ transition: 'stroke-dashoffset 80ms linear' }}
             />
-            <defs>
-              <linearGradient id="btt-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#6366f1" />
-                <stop offset="100%" stopColor="#a855f7" />
-              </linearGradient>
-            </defs>
           </svg>
-          <ArrowUp
-            size={20}
-            className="relative text-[#a1a1aa] group-hover:text-white transition-colors"
-          />
+          <ArrowUp size={18} aria-hidden="true" />
         </motion.button>
       )}
     </AnimatePresence>

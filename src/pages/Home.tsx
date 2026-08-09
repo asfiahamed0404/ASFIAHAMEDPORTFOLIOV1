@@ -14,22 +14,24 @@ import {
   ChevronLeft,
   ChevronRight,
   Code2,
+  Database,
   Download,
   ExternalLink,
   GraduationCap,
+  Landmark,
+  Layers3,
   Mail,
   MapPin,
   Menu,
   Phone,
   RefreshCw,
   Send,
-  UserRound,
+  Workflow,
   X,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import asfiPortrait from '../assets/Asfi_face.png'
-import asfiFull from '../assets/Asfi.png'
 import logo from '../assets/logo.png'
 import AmbientOrbs from '../components/AmbientOrbs'
 import BackToTop from '../components/BackToTop'
@@ -44,6 +46,26 @@ const VISITOR_KEY = 'asfi_visitor_id'
 const APPRECIATED_KEY = 'asfi_appreciated'
 const SECTION_EASE = [0.23, 1, 0.32, 1] as const
 const NAV_ACTIVATION_GAP = 16
+
+const ABOUT_FOCUS_AREAS = [
+  {
+    title: 'Machine learning workflows',
+    description: 'End-to-end pipelines: data preparation, training, evaluation, and monitoring.',
+    icon: Workflow,
+  },
+  {
+    title: 'Full-stack applications',
+    description: 'Production-ready web applications with clean APIs, scalable backends, and thoughtful user experiences.',
+    icon: Layers3,
+  },
+] as const
+
+const ABOUT_METADATA = [
+  { label: 'CSE', icon: GraduationCap },
+  { label: 'Software Engineering', icon: Code2 },
+  { label: 'Data Science & Engineering', icon: Database },
+  { label: 'University of Moratuwa', icon: Landmark },
+] as const
 
 const getSectionMotion = (shouldReduceMotion: boolean): MotionProps => shouldReduceMotion
   ? { initial: false }
@@ -491,6 +513,11 @@ const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
   const hasExperience = isNotEmpty(experience)
   const hasCertificates = certificates.length > 0
   const hasAbout = hasAboutContent(siteContent)
+  const hasAboutNarrative = [
+    siteContent?.about_paragraph1,
+    siteContent?.about_paragraph2,
+    siteContent?.about_paragraph3,
+  ].some(isNotEmpty)
   const hasContact = isNotEmpty(siteContent?.contact_intro)
   const validSocials = getValidSocials(socials)
   const hasSocials = validSocials.length > 0
@@ -632,32 +659,79 @@ const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
         {hasAbout && (
           <motion.section
             id="about"
-            className="pp-section pp-section-muted"
+            className="pp-section pp-section-muted pp-about-section"
             {...getSectionMotion(shouldReduceMotion)}
           >
-            <div className="pp-container pp-about-grid">
-              <div className="pp-about-image"><img src={asfiFull} alt="Asfi Ahamed" /></div>
-              <div className="pp-about-content">
-                <SectionHeading
-                  eyebrow="About"
-                  title="A focused builder with a systems mindset."
-                  subtitle="Thoughtful engineering, practical problem-solving, and a clear bias toward useful work."
-                  icon={UserRound}
-                />
-                <div className="pp-about-copy">
+            <div className="pp-container pp-about-container">
+              <div className="pp-about-layout">
+                <div className="pp-about-content">
+                  <SectionHeading
+                    eyebrow="About"
+                    title="A focused builder with a systems mindset."
+                    icon={Code2}
+                  />
                   {isNotEmpty(siteContent?.about_text) && (
-                    <div className="pp-about-lead" dangerouslySetInnerHTML={{ __html: siteContent?.about_text || '' }} />
+                    <div
+                      className="pp-about-lead"
+                      dangerouslySetInnerHTML={{ __html: siteContent?.about_text || '' }}
+                    />
                   )}
-                  {isNotEmpty(siteContent?.about_paragraph1) && (
-                    <p dangerouslySetInnerHTML={{ __html: siteContent?.about_paragraph1 || '' }} />
-                  )}
-                  {isNotEmpty(siteContent?.about_paragraph2) && (
-                    <p dangerouslySetInnerHTML={{ __html: siteContent?.about_paragraph2 || '' }} />
-                  )}
-                  {isNotEmpty(siteContent?.about_paragraph3) && (
-                    <p dangerouslySetInnerHTML={{ __html: siteContent?.about_paragraph3 || '' }} />
+                  {hasAboutNarrative && (
+                    <div className="pp-about-narrative">
+                      {isNotEmpty(siteContent?.about_paragraph1) && (
+                        <p dangerouslySetInnerHTML={{ __html: siteContent?.about_paragraph1 || '' }} />
+                      )}
+                      {isNotEmpty(siteContent?.about_paragraph2) && (
+                        <p dangerouslySetInnerHTML={{ __html: siteContent?.about_paragraph2 || '' }} />
+                      )}
+                      {isNotEmpty(siteContent?.about_paragraph3) && (
+                        <p dangerouslySetInnerHTML={{ __html: siteContent?.about_paragraph3 || '' }} />
+                      )}
+                    </div>
                   )}
                 </div>
+
+                <aside className="pp-about-focus-card" aria-labelledby="about-focus-title">
+                  <h3 id="about-focus-title">What I bring</h3>
+                  <div className="pp-about-focus-list">
+                    {ABOUT_FOCUS_AREAS.map((area, index) => {
+                      const Icon = area.icon
+                      return (
+                        <motion.div
+                          key={area.title}
+                          className="pp-about-focus-row"
+                          initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true, margin: '-30px' }}
+                          transition={shouldReduceMotion ? { duration: 0 } : {
+                            duration: 0.38,
+                            delay: index * 0.07,
+                            ease: SECTION_EASE,
+                          }}
+                        >
+                          <span className="pp-about-focus-icon" aria-hidden="true"><Icon size={24} /></span>
+                          <span className="pp-about-focus-copy">
+                            <strong>{area.title}</strong>
+                            <span>{area.description}</span>
+                          </span>
+                          <span className="pp-about-focus-status" aria-hidden="true" />
+                        </motion.div>
+                      )
+                    })}
+                  </div>
+                </aside>
+
+                <ul className="pp-about-metadata" aria-label="Academic and technical profile">
+                  {ABOUT_METADATA.map((item) => {
+                    const Icon = item.icon
+                    return (
+                      <li key={item.label}>
+                        <span className="pp-about-metadata-icon" aria-hidden="true"><Icon size={20} /></span>
+                        <span>{item.label}</span>
+                      </li>
+                    )
+                  })}
+                </ul>
               </div>
             </div>
           </motion.section>
@@ -780,7 +854,7 @@ const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
                   >
                     <div className="pp-skill-heading">
                       <h3>{category}</h3>
-                      <span>{items.length}</span>
+                      <span>{items.length} {items.length === 1 ? 'skill' : 'skills'}</span>
                     </div>
                     <ul>{items.map((skill) => <li key={skill.id}>{skill.name}</li>)}</ul>
                   </motion.article>

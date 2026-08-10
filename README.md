@@ -1,48 +1,129 @@
-# Asfi Ahamed — Personal Portfolio
+# Asfi Ahamed - Portfolio & CMS
 
-The official source repository for Asfi Ahamed's personal portfolio and content management system.
+![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![TypeScript 6](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%7C%20Auth%20%7C%20Storage-3FCF8E?logo=supabase&logoColor=white)
 
-The website presents professional experience, education, technical skills, certifications, and selected work through a responsive public interface. It also includes a protected administration area for managing portfolio content.
+A full-stack, database-driven personal portfolio with a protected content management dashboard. The public site and CMS share one Supabase backend, allowing portfolio content and engagement data to be managed without editing the frontend source.
 
-## Technology
+## Demo
 
-- React 19 and TypeScript
-- Vite
-- Tailwind CSS
-- Framer Motion
-- Supabase authentication, database, and storage
+![Portfolio and CMS walkthrough](docs/assets/portfolio-cms-demo.gif)
 
-## Application Areas
+## What It Includes
 
-- Responsive public portfolio
-- Accessible project and certificate presentation
-- Contact and appreciation interactions
-- Protected portfolio administration
-- Supabase-backed content management
+### Public portfolio
 
-## Local Development
+- Responsive single-page portfolio with animated, mobile-friendly navigation
+- Supabase-powered projects, skills, education, experience, certificates, site copy, and social links
+- Project cards with images, technology tags, source links, and live-demo links
+- Downloadable CV, contact flow, loading states, and toast feedback
+- Per-visitor appreciation toggle backed by Supabase
+- Automatic hiding of portfolio sections that have no content
 
-Install dependencies and start the development server:
+### Admin CMS
+
+- Protected email/password login with admin authorization
+- Dashboard with content totals and 30-day appreciation analytics
+- Create, edit, search, filter, paginate, and delete portfolio content
+- Manage projects, skills, education, experience, certificates, and social links
+- Edit homepage copy, contact details, resume URL, and stored SEO fields
+- Upload certificate images and manage stored branding assets with Supabase Storage
+- Responsive admin navigation for desktop and mobile
+
+## Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 19, TypeScript 6, Vite 8 |
+| Styling | Tailwind CSS 4, custom CSS |
+| Routing | React Router 7 |
+| Backend | Supabase Postgres, Auth, Storage, and Row Level Security |
+| UI and motion | Framer Motion, Lucide React, Sonner |
+| Analytics charts | Recharts |
+| Deployment | Vercel-ready SPA configuration |
+
+## Application Routes
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Public portfolio |
+| `/login` | Admin sign-in |
+| `/admin` | CMS dashboard |
+| `/admin/*` | Content, site copy, social, and asset management |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js `20.19+` or `22.12+`
+- npm
+- A configured Supabase project for the portfolio data and CMS
+
+### Installation
 
 ```bash
-npm install
+git clone https://github.com/asfiahamed0404/ASFIAHAMEDPORTFOLIOV1.git
+cd ASFIAHAMEDPORTFOLIOV1
+npm ci
+```
+
+Create `.env.local` from `.env.example`, then add your public Supabase credentials:
+
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Never expose a Supabase service-role key through a `VITE_` variable. Vite includes these values in the browser bundle.
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-Create a production build:
+The site will normally be available at `http://localhost:5173`.
 
-```bash
-npm run build
-```
+### Supabase requirements
 
-The application requires the following environment variables:
+The application expects:
+
+- Portfolio tables and Row Level Security policies matching the SQL history in [`supabase/migrations`](supabase/migrations)
+- A Supabase Auth user with a matching `profiles` row whose role is `admin`
+- Configured `certificate-images` and `branding` Storage buckets and policies
+
+> The migration directory records the existing project's schema evolution; it is not currently a zero-configuration bootstrap for an empty Supabase project. Review the migrations before applying them to a new project, especially the admin placeholder in `008_admin_profile.sql` and the project-managed `branding` bucket.
+
+## Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Type-check and create a production build in `dist/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint across the project |
+
+## Project Structure
 
 ```text
-VITE_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY
+src/
+|-- components/          Reusable public and admin UI
+|-- hooks/               Authentication and portfolio data hooks
+|-- lib/supabase.ts      Supabase client, types, and data operations
+|-- pages/Home.tsx       Public portfolio
+|-- pages/Login.tsx      Admin authentication
+`-- pages/admin/         CMS dashboard and content editors
+
+supabase/migrations/     Database schema and RLS history
+public/                  Static public assets
+docs/assets/             README media, including the demo GIF
 ```
 
-Environment values and other credentials must never be committed to source control.
+## Deployment
+
+Run `npm run build` to generate the production bundle. The included `vercel.json` rewrites all application routes to `index.html`, allowing React Router routes to work on Vercel. Add both Supabase environment variables to the deployment environment before publishing.
 
 ## Ownership and Use
 
@@ -57,3 +138,7 @@ Please do not fork or reproduce this repository for personal or commercial use. 
 - [GitHub](https://github.com/asfiahamed0404)
 - [LinkedIn](https://www.linkedin.com/in/asfi-ahamed-baa362347)
 - [Email](mailto:muasfiahamed276@gmail.com)
+
+---
+
+Built and maintained by Asfi Ahamed.

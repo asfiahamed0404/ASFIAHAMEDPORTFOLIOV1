@@ -601,7 +601,7 @@ const PortfolioContent: FC<PortfolioContentProps> = ({ onRetry }) => {
                     <img src={asfiPortrait} alt="Asfi Ahamed" />
                   </div>
                 </div>
-                <p>Software engineering · AI and data systems</p>
+                <p>Software Engineering · Data Science & Machine Learning</p>
               </div>
 
               <div className="pp-hero-details">

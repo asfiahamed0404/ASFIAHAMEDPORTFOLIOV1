@@ -1,43 +1,67 @@
 import type { ReactNode } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { supabase } from '../lib/supabase'
 
+interface AdminResolution {
+  userId: string
+  isAdmin: boolean
+  error: string | null
+}
+
 export default function RequireAuth({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth()
-  const [resolved, setResolved] = useState<{ isAdmin: boolean; error: string | null } | null>(null)
-  const inFlight = useRef(false)
-  const ADMIN_EMAIL = 'asfiportfolio@gmail.com'
+  const { user, loading, logout } = useAuth()
+  const [resolved, setResolved] = useState<AdminResolution | null>(null)
+  const [isSigningOut, setIsSigningOut] = useState(false)
+  const [signOutError, setSignOutError] = useState<string | null>(null)
+  const userId = user?.id
 
   useEffect(() => {
-    if (!user) {
-      setResolved(null)
-      return
-    }
-    if (inFlight.current) return
-    inFlight.current = true
+    if (!userId) return
+
+    let cancelled = false
 
     const checkAdmin = async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle()
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', userId)
+          .maybeSingle()
 
-      if (error) {
-        setResolved({ isAdmin: false, error: error.message || 'Failed to verify admin access' })
-      } else if (data?.role === 'admin') {
-        setResolved({ isAdmin: true, error: null })
-      } else if (user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
-        setResolved({ isAdmin: true, error: null })
-      } else {
-        setResolved({ isAdmin: false, error: null })
+        if (cancelled) return
+
+        setResolved({
+          userId,
+          isAdmin: !error && data?.role === 'admin',
+          error: error ? error.message || 'Failed to verify admin access' : null,
+        })
+      } catch {
+        if (!cancelled) {
+          setResolved({ userId, isAdmin: false, error: 'Failed to verify admin access' })
+        }
       }
-      inFlight.current = false
     }
-    checkAdmin()
-  }, [user])
+
+    void checkAdmin()
+
+    return () => {
+      cancelled = true
+    }
+  }, [userId])
+
+  const handleUnauthorizedSignOut = async () => {
+    if (isSigningOut) return
+    setIsSigningOut(true)
+    setSignOutError(null)
+
+    const { error } = await logout()
+    if (error) {
+      setSignOutError(error.message)
+      setIsSigningOut(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -51,7 +75,7 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
     return <Navigate to="/login" replace />
   }
 
-  if (!resolved) {
+  if (!resolved || resolved.userId !== user.id) {
     return (
       <div className="min-h-screen bg-[#030303] flex items-center justify-center">
         <div className="text-white">Loading...</div>
@@ -72,7 +96,23 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
   }
 
   if (!resolved.isAdmin) {
-    return <Navigate to="/login" replace />
+    return (
+      <div className="min-h-screen bg-[#030303] flex items-center justify-center p-4">
+        <div className="text-center text-white">
+          <h2 className="text-xl font-semibold mb-2">Access denied</h2>
+          <p className="text-[#71717a] mb-4">This account is not authorized to access the CMS.</p>
+          {signOutError && <p className="text-sm text-red-300 mb-4" role="alert">{signOutError}</p>}
+          <button
+            type="button"
+            onClick={handleUnauthorizedSignOut}
+            disabled={isSigningOut}
+            className="rounded-md bg-white px-4 py-2 text-sm font-medium text-black disabled:opacity-60"
+          >
+            {isSigningOut ? 'Signing out…' : 'Sign out'}
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return <>{children}</>

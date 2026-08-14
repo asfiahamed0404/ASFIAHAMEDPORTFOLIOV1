@@ -64,8 +64,8 @@ A full-stack, database-driven personal portfolio with a protected content manage
 ### Installation
 
 ```bash
-git clone https://github.com/asfiahamed0404/ASFIAHAMEDPORTFOLIOV1.git
-cd ASFIAHAMEDPORTFOLIOV1
+git clone https://github.com/asfiahamed0404/ASFI_Portfolio_CMS.git
+cd ASFI_Portfolio_CMS
 npm ci
 ```
 

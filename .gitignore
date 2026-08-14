@@ -29,3 +29,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local development artifacts
+/ai/
+/artifacts/
+/assets/.aistudio/
+/check.cjs
+
+# Internal planning and specifications
+/portfolio_full_spec.md
+/portfolio_redesign_prompt.md
+
+# Tool-generated local state
+/supabase/.temp/
